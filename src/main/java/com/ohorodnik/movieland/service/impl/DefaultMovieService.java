@@ -33,8 +33,6 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public Iterable<Movie> getMoviesByGenre(int genreId) {
-        //TODO: check if such genre exists at all
-        List<Integer> movieIdsList = movieRepository.getMovieIdsByGenreId(genreId);
-        return movieRepository.getMoviesByMovieIds(movieIdsList);
+        return movieRepository.getMoviesByMovieIds(movieRepository.getMovieIdsByGenreId(genreId));
     }
 }
