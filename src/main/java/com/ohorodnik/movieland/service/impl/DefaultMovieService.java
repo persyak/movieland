@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -18,8 +20,20 @@ public class DefaultMovieService implements MovieService {
     private final MovieRepository movieRepository;
 
     @Override
-    public Iterable<Movie> getAllMovies() {
-        return movieRepository.getAllMovies();
+    public Iterable<Movie> getAllMovies(Optional<String> rating, Optional<String> price) {
+        List<Movie> allMovies = StreamSupport
+                .stream(movieRepository.getAllMovies().spliterator(), false)
+                .collect(Collectors.toList());
+        if (rating.isPresent() && rating.get().equals("desc")) {
+            allMovies.sort(Comparator.comparingDouble(Movie::getRating).reversed());
+        }
+        if (price.isPresent() && price.get().equals("asc")) {
+            allMovies.sort(Comparator.comparingDouble(Movie::getPrice));
+        }
+        if (price.isPresent() && price.get().equals("desc")) {
+            allMovies.sort(Comparator.comparingDouble(Movie::getPrice).reversed());
+        }
+        return allMovies;
     }
 
     @Override
