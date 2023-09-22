@@ -8,8 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Year;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Builder
 @NoArgsConstructor
@@ -23,7 +22,7 @@ public class Movie {
     private int id;
     private String nameUa;
     private String nameNative;
-    private Date yearOfRelease;
+    private LocalDate yearOfRelease;
     private String description;
     private Double rating;
     private Double price;
