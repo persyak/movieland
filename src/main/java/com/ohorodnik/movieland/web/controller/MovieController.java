@@ -5,6 +5,7 @@ import com.ohorodnik.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,7 +16,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected Iterable<Movie> getAllMovies(
+    protected List<Movie> getAllMovies(
             @RequestParam(required = false) Optional<String> rating,
             @RequestParam(required = false) Optional<String> price) {
         return movieService.getAllMovies(rating, price);

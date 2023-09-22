@@ -5,9 +5,9 @@ import com.ohorodnik.movieland.entity.Movie;
 import java.util.List;
 
 public interface MovieRepository {
-    Iterable<Movie> getAllMovies();
+    List<Movie> getAllMovies();
 
     List<Integer> getMovieIdsByGenreId(int genreId);
 
-    Iterable<Movie> getMoviesByMovieIds(List<Integer> movieIdsList);
+    List<Movie> getMoviesByMovieIds(List<Integer> movieIdsList);
 }

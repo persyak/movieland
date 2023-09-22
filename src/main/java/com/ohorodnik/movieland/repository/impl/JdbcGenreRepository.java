@@ -9,12 +9,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcGenreRepository implements GenreRepository {
+    private final String GET_ALL_SQL = "select id, name from genre";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
     public Iterable<Genre> getAllGenres() {
-        return jdbcTemplate.query("select id, name from genre", new BeanPropertyRowMapper<>(Genre.class));
+        return jdbcTemplate.query(GET_ALL_SQL, new BeanPropertyRowMapper<>(Genre.class));
     }
 }
