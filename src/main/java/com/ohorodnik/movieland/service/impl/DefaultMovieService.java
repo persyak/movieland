@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -24,13 +25,18 @@ public class DefaultMovieService implements MovieService {
         List<Movie> allMovies = StreamSupport
                 .stream(movieRepository.getAllMovies().spliterator(), false)
                 .collect(Collectors.toList());
-        if (rating.isPresent() && rating.get().equals("desc")) {
+
+        BiPredicate<Optional<String>, String> sortingCondition =
+                (parameterOptional, sortingOrder) ->
+                        parameterOptional.isPresent() && parameterOptional.get().equals(sortingOrder);
+
+        if (sortingCondition.test(rating, "desc")) {
             allMovies.sort(Comparator.comparingDouble(Movie::getRating).reversed());
         }
-        if (price.isPresent() && price.get().equals("asc")) {
+        if (sortingCondition.test(price, "asc")) {
             allMovies.sort(Comparator.comparingDouble(Movie::getPrice));
         }
-        if (price.isPresent() && price.get().equals("desc")) {
+        if (sortingCondition.test(price, "desc")) {
             allMovies.sort(Comparator.comparingDouble(Movie::getPrice).reversed());
         }
         return allMovies;
