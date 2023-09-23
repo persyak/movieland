@@ -2,6 +2,8 @@ package com.ohorodnik.movieland.service;
 
 import com.ohorodnik.movieland.entity.Genre;
 
+import java.util.List;
+
 public interface GenreService {
-    Iterable<Genre> getAllGenres();
+    List<Genre> getAllGenres();
 }

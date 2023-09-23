@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DefaultGenreService implements GenreService {
@@ -17,11 +19,11 @@ public class DefaultGenreService implements GenreService {
 
     @Override
     @Cacheable("genres")
-    public Iterable<Genre> getAllGenres() {
+    public List<Genre> getAllGenres() {
         return genreRepository.getAllGenres();
     }
 
-    //TODO; think if we can apply more interesting cache than this poor one.
+    //TODO: think if we can apply more interesting cache than this simple one.
     @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
     @CacheEvict(value = "genres", allEntries = true)
     public void evictGenresCache(){}

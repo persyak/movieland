@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class JdbcGenreRepository implements GenreRepository {
     private final String GET_ALL_SQL = "select id, name from genre";
@@ -15,7 +17,7 @@ public class JdbcGenreRepository implements GenreRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Iterable<Genre> getAllGenres() {
+    public List<Genre> getAllGenres() {
         return jdbcTemplate.query(GET_ALL_SQL, new BeanPropertyRowMapper<>(Genre.class));
     }
 }

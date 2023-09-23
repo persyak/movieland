@@ -21,7 +21,22 @@ public class DefaultMovieService implements MovieService {
     @Override
     public List<Movie> getAllMovies(Optional<String> rating, Optional<String> price) {
         List<Movie> allMovies = movieRepository.getAllMovies();
+        return sort(rating, price, allMovies);
+    }
 
+    @Override
+    public List<Movie> getThreeRandomMovies() {
+        List<Movie> allMovies = movieRepository.getAllMovies();
+        Collections.shuffle(allMovies);
+        return allMovies.subList(0, 3);
+    }
+
+    @Override
+    public List<Movie> getMoviesByGenre(int genreId) {
+        return movieRepository.getMoviesByMovieIds(movieRepository.getMovieIdsByGenreId(genreId));
+    }
+
+    private List<Movie> sort(Optional<String> rating, Optional<String> price, List<Movie> allMovies) {
         BiPredicate<Optional<String>, String> sortingCondition =
                 (parameterOptional, sortingOrder) ->
                         parameterOptional.isPresent() && parameterOptional.get().equals(sortingOrder);
@@ -35,18 +50,7 @@ public class DefaultMovieService implements MovieService {
         if (sortingCondition.test(price, String.valueOf(SortingOrder.desc))) {
             allMovies.sort(Comparator.comparingDouble(Movie::getPrice).reversed());
         }
+
         return allMovies;
-    }
-
-    @Override
-    public List<Movie> getThreeRandomMovies() {
-        List<Movie> allMovies = movieRepository.getAllMovies();
-        Collections.shuffle(allMovies);
-        return allMovies.subList(0, 3);
-    }
-
-    @Override
-    public List<Movie> getMoviesByGenre(int genreId) {
-        return movieRepository.getMoviesByMovieIds(movieRepository.getMovieIdsByGenreId(genreId));
     }
 }
