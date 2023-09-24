@@ -15,10 +15,10 @@ import java.util.List;
 @Repository
 public class JdbcMovieRepository implements MovieRepository {
     private final String GET_ALL_SQL =
-            "select id, name_ua, name_native, year_of_release, description, rating, price, picture_path, votes from movie";
-    private final String GET_MOVIE_ID_BY_GENRE_ID_SQL = "select movie_id from movie_genre where genre_id=?";
+            "select id, name_ua, name_native, year_of_release, description, rating, price, picture_path, votes from movieland.movie";
+    private final String GET_MOVIE_ID_BY_GENRE_ID_SQL = "select movie_id from movieland.movie_genre where genre_id=?";
     private final String GET_MOVIES_BY_MOVIE_IDS_SQL =
-            "select id, name_ua, name_native, year_of_release, description, rating, price, picture_path, votes from movie where id in (:movieids)";
+            "select id, name_ua, name_native, year_of_release, description, rating, price, picture_path, votes from movieland.movie where id in (:movieids)";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

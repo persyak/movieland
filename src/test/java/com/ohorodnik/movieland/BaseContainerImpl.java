@@ -18,7 +18,8 @@ public class BaseContainerImpl {
         container = new PostgreSQLContainer<>("postgres:latest")
                 .withUsername("test")
                 .withPassword("password")
-                .withDatabaseName("items");
+                .withDatabaseName("movieland")
+                .withInitScript("db/scripts/create_schema_init.sql");
 
         container.start();
     }

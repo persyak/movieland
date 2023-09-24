@@ -1,0 +1,59 @@
+{
+  "movie": [
+    {
+      "id": 1,
+      "name_ua": "Втеча з Шоушенка",
+      "name_native": "The Shawshank Redemption",
+      "year_of_release": "1994-01-01",
+      "description": "testDescription1",
+      "rating": 8.9,
+      "price": 123.45,
+      "picture_path": "picturePath1",
+      "votes": 100
+    },
+    {
+      "id": 2,
+      "name_ua": "Зелена миля",
+      "name_native": "The Green Mile",
+      "year_of_release": "1999-01-01",
+      "description": "testDescription2",
+      "rating": 9.0,
+      "price": 134.67,
+      "picture_path": "picturePath2",
+      "votes": 100
+    },
+    {
+      "id": 3,
+      "name_ua": "Форест Гамп",
+      "name_native": "Forrest Gump",
+      "year_of_release": "1994-01-01",
+      "description": "testDescription3",
+      "rating": 8.6,
+      "price": 200.60,
+      "picture_path": "picturePath3",
+      "votes": 100
+    },
+    {
+      "id": 4,
+      "name_ua": "Список Шиндлера",
+      "name_native": "Schindler's List",
+      "year_of_release": "1993-01-01",
+      "description": "testDescription4",
+      "rating": 8.7,
+      "price": 150.50,
+      "picture_path": "picturePath4",
+      "votes": 100
+    },
+    {
+      "id": 5,
+      "name_ua": "1+1",
+      "name_native": "Intouchables",
+      "year_of_release": "2011-01-01",
+      "description": "testDescription5",
+      "rating": 8.3,
+      "price": 120.00,
+      "picture_path": "picturePath5",
+      "votes": 100
+    }
+  ]
+}
