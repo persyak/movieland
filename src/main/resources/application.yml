@@ -9,3 +9,6 @@ spring:
 caching:
   spring:
     genreListTTL: 14400000
+
+utils:
+  randomMoviesAmount: 3

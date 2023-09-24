@@ -5,6 +5,7 @@ import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.utils.entity.SortingOrder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -16,6 +17,9 @@ import java.util.function.BiPredicate;
 @Service
 @RequiredArgsConstructor
 public class DefaultMovieService implements MovieService {
+
+    @Value("${utils.randomMoviesAmount}")
+    private int randomMoviesAmount;
     private final MovieRepository movieRepository;
 
     @Override
@@ -28,7 +32,7 @@ public class DefaultMovieService implements MovieService {
     public List<Movie> getThreeRandomMovies() {
         List<Movie> allMovies = movieRepository.getAllMovies();
         Collections.shuffle(allMovies);
-        return allMovies.subList(0, 3);
+        return allMovies.subList(0, randomMoviesAmount);
     }
 
     @Override
