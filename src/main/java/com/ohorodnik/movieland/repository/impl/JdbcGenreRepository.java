@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public class JdbcGenreRepository implements GenreRepository {
-    private final String GET_ALL_SQL = "select id, name from genre";
+    private final String GET_ALL_SQL = "select id, name from movieland.genre";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

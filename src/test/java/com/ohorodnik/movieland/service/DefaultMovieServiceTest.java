@@ -89,9 +89,9 @@ public class DefaultMovieServiceTest {
     }
 
     @Test
-    @DisplayName("Get List of One Item on findAllMovies Call")
+    @DisplayName("Get list of four items on findAllMovies call")
     public void whenGetAllMovies_thenReturnListOfThreeMovies() {
-        List<Movie> found = movieService.getAllMovies(java.util.Optional.empty(), java.util.Optional.empty());
+        List<Movie> found = movieService.getAllMovies(Optional.empty(), Optional.empty());
         Movie actual = found.get(0);
 
         assertEquals(4, found.size());

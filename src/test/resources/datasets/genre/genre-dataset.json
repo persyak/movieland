@@ -1,0 +1,24 @@
+{
+  "genre": [
+    {
+      "id": 1,
+      "name": "genre1"
+    },
+    {
+      "id": 2,
+      "name": "genre2"
+    },
+    {
+      "id": 3,
+      "name": "genre3"
+    },
+    {
+      "id": 4,
+      "name": "genre4"
+    },
+    {
+      "id": 5,
+      "name": "genre5"
+    }
+  ]
+}
