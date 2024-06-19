@@ -10,5 +10,10 @@ caching:
   spring:
     genreListTTL: 14400000
 
+scheduler:
+  thread:
+    pool:
+      size: 5
+
 utils:
   randomMoviesAmount: 3

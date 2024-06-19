@@ -1,0 +1,3 @@
+caching:
+  spring:
+    genreListTTL: 5000
