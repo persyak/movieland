@@ -1,17 +1,17 @@
 package com.ohorodnik.movieland.cache.impl;
 
+import com.ohorodnik.movieland.annotation.CacheAnnotation;
 import com.ohorodnik.movieland.cache.Cache;
 import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Service
+@CacheAnnotation
 @RequiredArgsConstructor
 @EnableScheduling
 public class GenreCache implements Cache {
@@ -28,7 +28,13 @@ public class GenreCache implements Cache {
         genres.addAll(genreService.getAllGenres());
     }
 
+    //TODO: return copy of the list of genres
+    //TODO: check elements of the cache list
+    //TODO: Horsman -> Multithread. Read chapter. Write down all examples.
     public List<Genre> getGenres() {
+        if (genres.isEmpty()) {
+            updateCache();
+        }
         return genres;
     }
 }

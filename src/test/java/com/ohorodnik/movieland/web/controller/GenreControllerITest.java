@@ -18,7 +18,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class GenreControllerITest extends BaseContainerImpl {
+public class  GenreControllerITest extends BaseContainerImpl {
 
     private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
 
