@@ -18,7 +18,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class  GenreControllerITest extends BaseContainerImpl {
+public class GenreControllerITest extends BaseContainerImpl {
 
     private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
 
@@ -30,18 +30,14 @@ public class  GenreControllerITest extends BaseContainerImpl {
     public void testGetAllGenres() {
 
         await().atMost(7000, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> {
-                    mockMvc.perform(get("/api/v1/genre")
-                                    .contentType(MediaType.APPLICATION_JSON))
-                            .andExpect(status().isOk())
-                            .andExpect(jsonPath("$.size()").value(5))
-                            .andExpect(jsonPath("$[0].id").value("1"))
-                            .andExpect(jsonPath("$[0].name").value("genre1"))
-                            .andExpect(jsonPath("$[1].id").value("2"))
-                            .andExpect(jsonPath("$[1].name").value("genre2"));
-
-
-                }
+                () -> mockMvc.perform(get("/api/v1/genre")
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.size()").value(5))
+                        .andExpect(jsonPath("$[0].id").value("1"))
+                        .andExpect(jsonPath("$[0].name").value("genre1"))
+                        .andExpect(jsonPath("$[1].id").value("2"))
+                        .andExpect(jsonPath("$[1].name").value("genre2"))
         );
     }
 
