@@ -14,9 +14,13 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "genre")
-public class Genre {
+public class Genre implements Cloneable{
 
     @Id
     private int id;
     private String name;
+
+    public Genre clone() throws CloneNotSupportedException {
+        return (Genre) super.clone();
+    }
 }

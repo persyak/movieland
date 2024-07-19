@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -27,14 +28,18 @@ public class GenreCache implements Cache {
         genres.clear();
         genres.addAll(genreService.getAllGenres());
     }
-
-    //TODO: return copy of the list of genres
-    //TODO: check elements of the cache list
-    //TODO: Horsman -> Multithread. Read chapter. Write down all examples.
+    
     public List<Genre> getGenres() {
-        if (genres.isEmpty()) {
-            updateCache();
-        }
-        return genres;
+        List<Genre> returnedCachedValues = new ArrayList<>();
+
+        genres.forEach(genre -> {
+            try {
+                returnedCachedValues.add(genre.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return returnedCachedValues;
     }
 }
