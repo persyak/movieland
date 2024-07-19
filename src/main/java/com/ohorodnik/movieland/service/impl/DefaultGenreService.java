@@ -6,8 +6,6 @@ import com.ohorodnik.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class DefaultGenreService implements GenreService {
@@ -15,7 +13,7 @@ public class DefaultGenreService implements GenreService {
     private final GenreRepository genreRepository;
 
     @Override
-    public List<Genre> getAllGenres() {
-        return genreRepository.getAllGenres();
+    public Iterable<Genre> getAllGenres() {
+        return genreRepository.findAll();
     }
 }

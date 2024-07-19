@@ -1,9 +1,8 @@
-package com.ohorodnik.movieland.repository.impl;
+package com.ohorodnik.movieland.repository;
 
 import com.ohorodnik.movieland.entity.Genre;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
-import com.ohorodnik.movieland.repository.GenreRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JdbcGenreRepositoryTest extends BaseContainerImpl {
+public class GenreRepositoryTest extends BaseContainerImpl {
 
     private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
 
@@ -20,9 +19,9 @@ public class JdbcGenreRepositoryTest extends BaseContainerImpl {
 
     @Test
     @DataSet(value = GENRE_DATASET, disableConstraints = true, skipCleaningFor = "flyway_schema_history")
-    public void testGetAllGenres(){
+    public void testGetAllGenres() {
 
-        List<Genre> genresList = genreRepository.getAllGenres();
+        List<Genre> genresList = (List<Genre>) genreRepository.findAll();
         assertEquals(5, genresList.size());
 
         Genre actual = genresList.get(0);

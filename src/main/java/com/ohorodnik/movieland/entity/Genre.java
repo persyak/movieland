@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "genre")
-public class Genre implements Cloneable{
+@Table(name = "genre", schema = "movieland")
+public class Genre implements Cloneable {
 
     @Id
     private int id;

@@ -38,12 +38,12 @@ public class DefaultGenreServiceTest {
                 .name("testGenre3")
                 .build();
 
-        Mockito.when(genreRepository.getAllGenres()).thenReturn(List.of(firstGenre, secondGenre, thirdGenre));
+        Mockito.when(genreRepository.findAll()).thenReturn(List.of(firstGenre, secondGenre, thirdGenre));
     }
 
     @Test
     public void testGetAllGenres() {
-        List<Genre> genresList = genreService.getAllGenres();
+        List<Genre> genresList = (List<Genre>) genreService.getAllGenres();
 
         assertEquals(3, genresList.size());
 

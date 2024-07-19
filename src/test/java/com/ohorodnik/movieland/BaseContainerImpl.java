@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -7,9 +8,14 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static com.github.database.rider.core.api.configuration.Orthography.LOWERCASE;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @DBRider
+@DBUnit(caseInsensitiveStrategy = LOWERCASE,
+        cacheConnection = false,
+        schema = "movieland")
 public class BaseContainerImpl {
 
     private static final PostgreSQLContainer<?> container;

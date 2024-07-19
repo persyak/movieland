@@ -26,9 +26,9 @@ public class GenreCache implements Cache {
     public void updateCache() {
 
         genres.clear();
-        genres.addAll(genreService.getAllGenres());
+        genres.addAll((List<Genre>) genreService.getAllGenres());
     }
-    
+
     public List<Genre> getGenres() {
         List<Genre> returnedCachedValues = new ArrayList<>();
 
