@@ -3,3 +3,9 @@ spring:
     username: postgres
     password: postgres
     url: jdbc:postgresql://127.0.0.1:5432/movieland?currentSchema=movieland
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

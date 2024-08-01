@@ -1,9 +1,9 @@
 package com.ohorodnik.movieland.cache.impl;
 
 import com.ohorodnik.movieland.annotation.CacheAnnotation;
-import com.ohorodnik.movieland.cache.Cache;
+import com.ohorodnik.movieland.cache.GenreCache;
 import com.ohorodnik.movieland.entity.Genre;
-import com.ohorodnik.movieland.service.GenreService;
+import com.ohorodnik.movieland.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,21 +15,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @CacheAnnotation
 @RequiredArgsConstructor
 @EnableScheduling
-public class GenreCache implements Cache {
+public class GenreCacheImpl implements GenreCache {
 
     private final List<Genre> genres = new CopyOnWriteArrayList<>();
 
-    private final GenreService genreService;
+    private final GenreRepository genreRepository;
 
-    @Override
     @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
-    public void updateCache() {
+    private void updateCache() {
 
         genres.clear();
-        genres.addAll((List<Genre>) genreService.getAllGenres());
+        genres.addAll((List<Genre>) genreRepository.findAll());
     }
 
-    public List<Genre> getGenres() {
+    public List<Genre> findAll() {
         List<Genre> returnedCachedValues = new ArrayList<>();
 
         genres.forEach(genre -> {

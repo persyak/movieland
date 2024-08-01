@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,12 +36,9 @@ public class JdbcMovieRepository implements MovieRepository {
 
     @Override
     public List<Movie> getMoviesByMovieIds(List<Integer> movieIdsList) {
-        if (movieIdsList.isEmpty()) {
-            return List.of();
-        }
-        SqlParameterSource movieIds = new MapSqlParameterSource("movieids", movieIdsList);
-        return namedParameterJdbcTemplate.query(GET_MOVIES_BY_MOVIE_IDS_SQL,
-                movieIds,
+        return movieIdsList.isEmpty() ? List.of()
+                : namedParameterJdbcTemplate.query(GET_MOVIES_BY_MOVIE_IDS_SQL,
+                new MapSqlParameterSource("movieids", movieIdsList),
                 new BeanPropertyRowMapper<>(Movie.class));
     }
 }

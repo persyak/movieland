@@ -27,7 +27,7 @@ public class GenreControllerITest extends BaseContainerImpl {
 
     @Test
     @DataSet(value = GENRE_DATASET, disableConstraints = true, skipCleaningFor = "flyway_schema_history")
-    public void testGetAllGenres() {
+    public void testFindAll() {
 
         await().atMost(7000, TimeUnit.MILLISECONDS).untilAsserted(
                 () -> mockMvc.perform(get("/api/v1/genre")

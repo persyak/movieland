@@ -1,7 +1,7 @@
 package com.ohorodnik.movieland.web.controller;
 
-import com.ohorodnik.movieland.cache.impl.GenreCache;
 import com.ohorodnik.movieland.entity.Genre;
+import com.ohorodnik.movieland.service.impl.DefaultGenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,7 +25,7 @@ public class GenreControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private GenreCache genreCache;
+    private DefaultGenreService defaultGenreService;
 
     @BeforeEach
     public void setup() {
@@ -45,11 +45,11 @@ public class GenreControllerTest {
                 .name("testGenre3")
                 .build();
 
-        Mockito.when(genreCache.getGenres()).thenReturn(List.of(firstGenre, secondGenre, thirdGenre));
+        Mockito.when(defaultGenreService.findAll()).thenReturn(List.of(firstGenre, secondGenre, thirdGenre));
     }
 
     @Test
-    public void testGetAllGenres() throws Exception {
+    public void testFindAll() throws Exception {
 
         mockMvc.perform(get("/api/v1/genre")
                         .contentType(MediaType.APPLICATION_JSON))
