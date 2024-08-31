@@ -1,13 +1,11 @@
 package com.ohorodnik.movieland.repository;
 
 import com.ohorodnik.movieland.entity.Movie;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-public interface MovieRepository {
-    List<Movie> getAllMovies();
-
-    List<Integer> getMovieIdsByGenreId(int genreId);
-
-    List<Movie> getMoviesByMovieIds(List<Integer> movieIdsList);
+@Repository
+@Transactional
+public interface MovieRepository extends JpaRepository<Movie, Integer> {
 }

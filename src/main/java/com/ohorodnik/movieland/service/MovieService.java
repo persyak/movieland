@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieService {
-    List<Movie> getAllMovies(Optional<String> rating, Optional<String> price);
+    List<Movie> findAll(Optional<String> rating, Optional<String> price);
 
-    List<Movie> getThreeRandomMovies();
+    List<Movie> findRandomThree();
 
-    List<Movie> getMoviesByGenre(int genreId);
+    List<Movie> findByGenreId(int genreId);
 }

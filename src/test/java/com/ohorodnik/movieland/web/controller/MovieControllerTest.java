@@ -79,21 +79,21 @@ public class MovieControllerTest {
                 .votes(100)
                 .build();
 
-        Mockito.when(defaultMovieService.getAllMovies(Optional.empty(), Optional.empty()))
+        Mockito.when(defaultMovieService.findAll(Optional.empty(), Optional.empty()))
                 .thenReturn(List.of(firstMovie, secondMovie, thirdMovie, fourthdMovie));
-        Mockito.when(defaultMovieService.getAllMovies(Optional.of("desc"), Optional.empty()))
+        Mockito.when(defaultMovieService.findAll(Optional.of("desc"), Optional.empty()))
                 .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
-        Mockito.when(defaultMovieService.getAllMovies(Optional.empty(), Optional.of("asc")))
+        Mockito.when(defaultMovieService.findAll(Optional.empty(), Optional.of("asc")))
                 .thenReturn(List.of(firstMovie, secondMovie, fourthdMovie, thirdMovie));
-        Mockito.when(defaultMovieService.getAllMovies(Optional.empty(), Optional.of("desc")))
+        Mockito.when(defaultMovieService.findAll(Optional.empty(), Optional.of("desc")))
                 .thenReturn(List.of(thirdMovie, fourthdMovie, secondMovie, firstMovie));
-        Mockito.when(defaultMovieService.getThreeRandomMovies())
+        Mockito.when(defaultMovieService.findRandomThree())
                 .thenReturn(List.of(fourthdMovie, secondMovie, firstMovie));
-        Mockito.when(defaultMovieService.getMoviesByGenre(1)).thenReturn(List.of(secondMovie, firstMovie));
+        Mockito.when(defaultMovieService.findByGenreId(1)).thenReturn(List.of(secondMovie, firstMovie));
     }
 
     @Test
-    public void testGetAllMovies() throws Exception {
+    public void testFindAll() throws Exception {
 
         mockMvc.perform(get("/api/v1/movie")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -112,7 +112,7 @@ public class MovieControllerTest {
     }
 
     @Test
-    public void testGetAllMoviesSortedByRatingDesc() throws Exception {
+    public void testFindAllSortedByRatingDesc() throws Exception {
 
         mockMvc.perform(get("/api/v1/movie?rating=desc")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -131,7 +131,7 @@ public class MovieControllerTest {
     }
 
     @Test
-    public void testGetAllMoviesSortedByPriceAsc() throws Exception {
+    public void testFindAllSortedByPriceAsc() throws Exception {
 
         mockMvc.perform(get("/api/v1/movie?price=asc")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -150,7 +150,7 @@ public class MovieControllerTest {
     }
 
     @Test
-    public void testGetAllMoviesSortedByPriceDesc() throws Exception {
+    public void testFindAllSortedByPriceDesc() throws Exception {
 
         mockMvc.perform(get("/api/v1/movie?price=desc")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -188,7 +188,7 @@ public class MovieControllerTest {
     }
 
     @Test
-    public void testGetMoviesByGenre() throws Exception {
+    public void testFindByGenreId() throws Exception {
 
         mockMvc.perform(get("/api/v1/movie/genre/1")
                         .contentType(MediaType.APPLICATION_JSON))

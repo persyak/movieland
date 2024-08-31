@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.service;
 
+import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,9 @@ public class DefaultMovieServiceTest {
     private MovieService movieService;
     @MockBean
     private MovieRepository movieRepository;
+
+    @MockBean
+    private GenreService genreService;
 
     @BeforeEach
     public void setup() {
@@ -81,18 +85,22 @@ public class DefaultMovieServiceTest {
         expected.add(thirdMovie);
         expected.add(fourthdMovie);
 
-        Mockito.when(movieRepository.getAllMovies()).thenReturn(expected);
-        Mockito.when(movieRepository.getMovieIdsByGenreId(1)).thenReturn(List.of(2, 3, 4));
-        Mockito.when(movieRepository.getMoviesByMovieIds(List.of(2, 3, 4))).thenReturn(
-                List.of(secondMovie, thirdMovie, fourthdMovie));
-        Mockito.when(movieRepository.getMovieIdsByGenreId(2)).thenReturn(List.of());
+        Genre expectedGenre = Genre.builder()
+                .id(1)
+                .name("expectedGenre")
+                .movies(expected)
+                .build();
+        Optional<Genre> genreOptional = Optional.of(expectedGenre);
+
+        Mockito.when(movieRepository.findAll()).thenReturn(expected);
+        Mockito.when(genreService.findById(1)).thenReturn(genreOptional);
     }
 
     @Test
     @DisplayName("Get list of four items on findAllMovies call")
-    public void whenGetAllMovies_thenReturnListOfThreeMovies() {
-        List<Movie> found = movieService.getAllMovies(Optional.empty(), Optional.empty());
-        Movie actual = found.get(0);
+    public void whenFindAll_thenReturnListOfFourMovies() {
+        List<Movie> found = movieService.findAll(Optional.empty(), Optional.empty());
+        Movie actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(1, actual.getId());
@@ -108,9 +116,9 @@ public class DefaultMovieServiceTest {
 
     @Test
     @DisplayName("Return list of movies sorted by rating in desc when requested")
-    public void whenGetAllMoviesWithRatingDesc_thenReturnSortedListByRatingDesc() {
-        List<Movie> found = movieService.getAllMovies(Optional.of("desc"), Optional.empty());
-        Movie actual = found.get(0);
+    public void whenFindAllWithRatingDesc_thenReturnSortedListByRatingDesc() {
+        List<Movie> found = movieService.findAll(Optional.of("desc"), Optional.empty());
+        Movie actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(2, actual.getId());
@@ -126,9 +134,9 @@ public class DefaultMovieServiceTest {
 
     @Test
     @DisplayName("Return list of movies sorted by price in asc when requested")
-    public void whenGetAllMoviesWithPriceAsc_thenReturnSortedListByPriceAsc() {
-        List<Movie> found = movieService.getAllMovies(Optional.empty(), Optional.of("asc"));
-        Movie actual = found.get(0);
+    public void whenFindAllWithPriceAsc_thenReturnSortedListByPriceAsc() {
+        List<Movie> found = movieService.findAll(Optional.empty(), Optional.of("asc"));
+        Movie actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(1, actual.getId());
@@ -144,9 +152,9 @@ public class DefaultMovieServiceTest {
 
     @Test
     @DisplayName("Return list of movies sorted by price in desc when requested")
-    public void whenGetAllMoviesWithPriceDesc_thenReturnSortedListByPriceDesc() {
-        List<Movie> found = movieService.getAllMovies(Optional.empty(), Optional.of("desc"));
-        Movie actual = found.get(0);
+    public void whenFindAllWithPriceDesc_thenReturnSortedListByPriceDesc() {
+        List<Movie> found = movieService.findAll(Optional.empty(), Optional.of("desc"));
+        Movie actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(3, actual.getId());
@@ -162,17 +170,17 @@ public class DefaultMovieServiceTest {
 
     @Test
     @DisplayName("Get list of three random movies")
-    public void whenGetThreeRandomMoviesRequested_thenReturnListOfThreeMovies() {
-        assertEquals(3, movieService.getThreeRandomMovies().size());
+    public void whenFindThreeRandomMoviesRequested_thenReturnListOfThreeMovies() {
+        assertEquals(3, movieService.findRandomThree().size());
     }
 
     @Test
-    @DisplayName("Get list of three movies by genre id 1")
-    public void whenGetMoviesByGenre_thenReturnListOfThreeMovies() {
-        List<Movie> actuals = movieService.getMoviesByGenre(1);
-        assertEquals(3, actuals.size());
+    @DisplayName("Get list of four movies by genre id 1")
+    public void whenFindMoviesByGenreId_thenReturnListOfFourMovies() {
+        List<Movie> actuals = movieService.findByGenreId(1);
+        assertEquals(4, actuals.size());
 
-        Movie actual = actuals.get(0);
+        Movie actual = actuals.get(1);
 
         assertEquals(2, actual.getId());
         assertEquals("Зелена миля", actual.getNameUa());
@@ -188,6 +196,6 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get empty list when movies by genre do not exist")
     public void whenNoMoviesAvailableByGenre_thenGetEmptyList() {
-        assertEquals(0, movieService.getMoviesByGenre(2).size());
+        assertEquals(0, movieService.findByGenreId(2).size());
     }
 }
