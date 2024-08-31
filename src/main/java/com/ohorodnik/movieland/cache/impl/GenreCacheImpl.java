@@ -25,6 +25,7 @@ public class GenreCacheImpl implements GenreCache {
 
     @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
     private void updateCache() {
+        genres.clear();
         genreRepository.findAll().forEach(genre -> genres.put(genre.getId(), genre));
     }
 
