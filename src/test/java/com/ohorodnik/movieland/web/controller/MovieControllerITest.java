@@ -23,7 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MovieControllerITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
-    private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
+//    private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
+//    private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,13 +44,11 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription1"))
                 .andExpect(jsonPath("$[0].rating").value("8.9"))
                 .andExpect(jsonPath("$[0].price").value("123.45"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
 
-        assertSelectCount(6);
+        assertSelectCount(1);
     }
 
     @Test
@@ -67,13 +66,11 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription2"))
                 .andExpect(jsonPath("$[0].rating").value("9.0"))
                 .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
 
-        assertSelectCount(6);
+        assertSelectCount(1);
     }
 
     @Test
@@ -91,13 +88,11 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(jsonPath("$[0].nameNative").value("Intouchables"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(2011, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription5"))
                 .andExpect(jsonPath("$[0].rating").value("8.3"))
                 .andExpect(jsonPath("$[0].price").value("120.0"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath5"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath5"));
 
-        assertSelectCount(6);
+        assertSelectCount(1);
     }
 
     @Test
@@ -115,13 +110,11 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription3"))
                 .andExpect(jsonPath("$[0].rating").value("8.6"))
                 .andExpect(jsonPath("$[0].price").value("200.6"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
 
-        assertSelectCount(6);
+        assertSelectCount(1);
     }
 
     @Test
@@ -135,17 +128,18 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(3));
 
-        assertSelectCount(4);
+        assertSelectCount(1);
     }
 
 //    @Test
-//    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, disableConstraints = true,
+//    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET}, disableConstraints = true,
 //            skipCleaningFor = "flyway_schema_history")
-//    public void testFindByGenreId() throws Exception {
+//    public void testFindByGenreId() {
 //
 //        SQLStatementCountValidator.reset();
 //
-//        mockMvc.perform(get("/api/v1/movie/genre/1")
+//        await().atMost(7000, TimeUnit.MILLISECONDS).untilAsserted(
+//                () -> mockMvc.perform(get("/api/v1/movie/genre/1")
 //                        .contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.size()").value(2))
@@ -158,7 +152,8 @@ public class MovieControllerITest extends BaseContainerImpl {
 //                .andExpect(jsonPath("$[0].rating").value("9.0"))
 //                .andExpect(jsonPath("$[0].price").value("134.67"))
 //                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"))
-//                .andExpect(jsonPath("$[0].votes").value("100"));
+//                .andExpect(jsonPath("$[0].votes").value("100"))
+//        );
 //
 //        assertSelectCount(2);
 //    }

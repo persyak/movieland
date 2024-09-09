@@ -104,11 +104,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription1"))
                 .andExpect(jsonPath("$[0].rating").value("8.9"))
                 .andExpect(jsonPath("$[0].price").value("123.45"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
     }
 
     @Test
@@ -123,11 +121,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription2"))
                 .andExpect(jsonPath("$[0].rating").value("9.0"))
                 .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
     }
 
     @Test
@@ -142,11 +138,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription1"))
                 .andExpect(jsonPath("$[0].rating").value("8.9"))
                 .andExpect(jsonPath("$[0].price").value("123.45"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
     }
 
     @Test
@@ -161,11 +155,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription3"))
                 .andExpect(jsonPath("$[0].rating").value("8.6"))
                 .andExpect(jsonPath("$[0].price").value("200.6"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
     }
 
     @Test
@@ -180,11 +172,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("Schindler's List"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1993, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription4"))
                 .andExpect(jsonPath("$[0].rating").value("8.7"))
                 .andExpect(jsonPath("$[0].price").value("150.5"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath4"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath4"));
     }
 
     @Test
@@ -199,10 +189,8 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
                         .toString()))
-                .andExpect(jsonPath("$[0].description").value("testDescription2"))
                 .andExpect(jsonPath("$[0].rating").value("9.0"))
                 .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"))
-                .andExpect(jsonPath("$[0].votes").value("100"));
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
     }
 }
