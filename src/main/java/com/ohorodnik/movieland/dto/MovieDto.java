@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 @Getter
 @Setter
@@ -22,7 +22,7 @@ public class MovieDto {
     private int id;
     private String nameUa;
     private String nameNative;
-    private LocalDate yearOfRelease;
+    private Year yearOfRelease;
     private Double rating;
     private Double price;
     private String picturePath;

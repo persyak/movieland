@@ -7,6 +7,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,13 +30,21 @@ public class Movie {
 
     @Id
     private int id;
+    @NotBlank(message = "Please add item name")
+    @Size(min = 3)
     private String nameUa;
+    @NotBlank(message = "Please add item name")
+    @Size(min = 3)
     private String nameNative;
-    private LocalDate yearOfRelease;
+    @Builder.Default
+    private LocalDate yearOfRelease = LocalDate.now();
     private String description;
+    @Positive(message = "Value should be above zero")
     private Double rating;
+    @Positive(message = "Value should be above zero")
     private Double price;
     private String picturePath;
+    @Positive(message = "Value should be above zero")
     private int votes;
 
     @ManyToMany

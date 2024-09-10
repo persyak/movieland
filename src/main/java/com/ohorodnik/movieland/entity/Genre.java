@@ -6,6 +6,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +27,8 @@ public class Genre implements Cloneable {
 
     @Id
     private int id;
+    @NotBlank(message = "Please add item name")
+    @Size(min = 3)
     private String name;
 
     @ManyToMany(mappedBy = "genres", fetch = FetchType.EAGER)
