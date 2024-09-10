@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,8 +103,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].nameUa").value("Втеча з Шоушенка"))
                 .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
                 .andExpect(jsonPath("$[0].rating").value("8.9"))
                 .andExpect(jsonPath("$[0].price").value("123.45"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
@@ -119,8 +119,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("2"))
                 .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
                 .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
                 .andExpect(jsonPath("$[0].rating").value("9.0"))
                 .andExpect(jsonPath("$[0].price").value("134.67"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
@@ -136,8 +135,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].nameUa").value("Втеча з Шоушенка"))
                 .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
                 .andExpect(jsonPath("$[0].rating").value("8.9"))
                 .andExpect(jsonPath("$[0].price").value("123.45"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
@@ -153,8 +151,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("3"))
                 .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
                 .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1994, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
                 .andExpect(jsonPath("$[0].rating").value("8.6"))
                 .andExpect(jsonPath("$[0].price").value("200.6"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
@@ -170,8 +167,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("4"))
                 .andExpect(jsonPath("$[0].nameUa").value("Список Шиндлера"))
                 .andExpect(jsonPath("$[0].nameNative").value("Schindler's List"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1993, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1993).toString()))
                 .andExpect(jsonPath("$[0].rating").value("8.7"))
                 .andExpect(jsonPath("$[0].price").value("150.5"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath4"));
@@ -187,8 +183,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].id").value("2"))
                 .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
                 .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
-                        .toString()))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
                 .andExpect(jsonPath("$[0].rating").value("9.0"))
                 .andExpect(jsonPath("$[0].price").value("134.67"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
