@@ -5,6 +5,8 @@ spring:
     hikari:
       idleTimeout: 30000
       maximumPoolSize: 10
+  jpa:
+    open-in-view: false
 
 caching:
   spring:
@@ -14,6 +16,3 @@ scheduler:
   thread:
     pool:
       size: 5
-
-utils:
-  randomMoviesAmount: 3

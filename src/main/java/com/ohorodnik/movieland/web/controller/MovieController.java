@@ -3,6 +3,8 @@ package com.ohorodnik.movieland.web.controller;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
+import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +26,19 @@ public class MovieController {
 
     @GetMapping
     protected List<MovieDto> findAll(
-            @RequestParam(required = false) Optional<String> rating,
-            @RequestParam(required = false) Optional<String> price) {
-        return movieMapper.toMovieDtoList(movieService.findAll(rating, price));
+            @RequestParam(required = false) RatingSortingOrder ratingSortingOrder,
+            @RequestParam(required = false) PriceSortingOrder priceSortingOrder) {
 
+        if (ratingSortingOrder == null && priceSortingOrder == null) {
+            return movieMapper.toMovieDtoList(movieService.findAll());
+        }
+        if (ratingSortingOrder != null && priceSortingOrder != null) {
+            return movieMapper.toMovieDtoList(movieService.findAll(priceSortingOrder, ratingSortingOrder));
+        }
+        if (ratingSortingOrder != null){
+            return movieMapper.toMovieDtoList(movieService.findAll(ratingSortingOrder));
+        }
+        return movieMapper.toMovieDtoList(movieService.findAll(priceSortingOrder));
     }
 
     @GetMapping("/random")
@@ -36,7 +47,20 @@ public class MovieController {
     }
 
     @GetMapping("/genre/{genreId}")
-    protected List<MovieDto> findByGenreId(@PathVariable int genreId) {
-        return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId));
+    protected List<MovieDto> findByGenreId(
+            @PathVariable int genreId,
+            @RequestParam(required = false) RatingSortingOrder ratingSortingOrder,
+            @RequestParam(required = false) PriceSortingOrder priceSortingOrder) {
+
+        if (ratingSortingOrder == null && priceSortingOrder == null) {
+            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId));
+        }
+        if (ratingSortingOrder != null && priceSortingOrder != null) {
+            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, priceSortingOrder, ratingSortingOrder));
+        }
+        if (ratingSortingOrder != null){
+            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, ratingSortingOrder));
+        }
+        return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, priceSortingOrder));
     }
 }

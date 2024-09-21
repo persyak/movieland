@@ -35,6 +35,6 @@ public class GenreRepositoryTest extends BaseContainerImpl {
         assertEquals(1, actual.getId());
         assertEquals("genre1", actual.getName());
 
-        assertSelectCount(6);
+        assertSelectCount(1);
     }
 }

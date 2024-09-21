@@ -1,9 +1,9 @@
-package com.ohorodnik.movieland.utils.entity;
+package com.ohorodnik.movieland.utils.enums;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum SortingOrder {
+public enum PriceSortingOrder {
     asc,
     desc;
 }
