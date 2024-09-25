@@ -3,6 +3,7 @@ package com.ohorodnik.movieland.repository.impl;
 import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
@@ -21,6 +22,16 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
 
     @Override
     public List<Movie> findAndSortByPriceAndRating(String priceSortingOrder, String ratingSortingOrder) {
+        return create(priceSortingOrder, ratingSortingOrder).getResultList();
+    }
+
+    //TODO: implement method order by price and rating
+    @Override
+    public List<Movie> findByGenreIdAndSortByPriceAndRating(int genreId, String priceSortingOrder, String ratingSortingOrder) {
+        return List.of();
+    }
+
+    private TypedQuery<Movie> create(String priceSortingOrder, String ratingSortingOrder) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Movie> criteriaQuery = criteriaBuilder.createQuery(Movie.class);
 
@@ -37,14 +48,6 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
 
         criteriaQuery.orderBy(movieList);
 
-        return entityManager.createQuery(criteriaQuery).getResultList();
+        return entityManager.createQuery(criteriaQuery);
     }
-
-    //TODO: implement method order by price and rating
-    @Override
-    public List<Movie> findByGenreIdAndSortByPriceAndRating(int genreId, String priceSortingOrder, String ratingSortingOrder) {
-        return List.of();
-    }
-
-
 }

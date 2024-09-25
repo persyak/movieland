@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/genre", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/genres", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GenreController {
 
     private final GenreService genreService;

@@ -1,11 +1,10 @@
 package com.ohorodnik.movieland.cache.impl;
 
-import com.ohorodnik.movieland.annotation.CacheAnnotation;
+import com.ohorodnik.movieland.annotation.Cache;
 import com.ohorodnik.movieland.cache.GenreCache;
 import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
@@ -14,12 +13,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@CacheAnnotation
+@Cache
 @RequiredArgsConstructor
-@EnableScheduling
 public class GenreCacheImpl implements GenreCache {
 
-    Map<Integer, Genre> genres = new ConcurrentHashMap<>();
+    private Map<Integer, Genre> genres = new ConcurrentHashMap<>();
 
     private final GenreRepository genreRepository;
 
@@ -32,6 +30,7 @@ public class GenreCacheImpl implements GenreCache {
     public List<Genre> findAll() {
         List<Genre> returnedCachedValues = new ArrayList<>();
 
+        //TODO: think what to do with clone, should be removed.
         genres.values().forEach(genre -> {
             try {
                 returnedCachedValues.add(genre.clone());

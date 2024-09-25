@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
+//TODO: try moving @Import to BaseContainerImpl. Try to make this by default
 @Import(TestConfigurationToCountAllQueries.class)
 public class MovieControllerITest extends BaseContainerImpl {
 

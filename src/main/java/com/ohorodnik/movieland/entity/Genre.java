@@ -1,6 +1,5 @@
 package com.ohorodnik.movieland.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "genre", schema = "movieland")
-@JsonIgnoreProperties(value = "movies")
 public class Genre implements Cloneable {
 
     @Id
@@ -26,6 +24,7 @@ public class Genre implements Cloneable {
     @Size(min = 3)
     private String name;
 
+    //TODO: define what to do with it and with cache.
     public Genre clone() throws CloneNotSupportedException {
         return (Genre) super.clone();
     }

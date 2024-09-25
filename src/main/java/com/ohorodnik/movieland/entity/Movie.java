@@ -1,6 +1,5 @@
 package com.ohorodnik.movieland.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -25,7 +24,6 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "movie", schema = "movieland")
-@JsonIgnoreProperties(value = "genres")
 public class Movie {
 
     @Id

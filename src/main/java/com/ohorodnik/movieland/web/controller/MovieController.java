@@ -5,40 +5,38 @@ import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
     private final MovieService movieService;
     private final MovieMapper movieMapper;
 
     @GetMapping
-    protected List<MovieDto> findAll(
-            @RequestParam(required = false) RatingSortingOrder ratingSortingOrder,
-            @RequestParam(required = false) PriceSortingOrder priceSortingOrder) {
+    protected List<MovieDto> findAll(MovieRequest movieRequest) {
 
-        if (ratingSortingOrder == null && priceSortingOrder == null) {
+        if (movieRequest.getRatingSortingOrder() == null && movieRequest.getPriceSortingOrder() == null) {
             return movieMapper.toMovieDtoList(movieService.findAll());
         }
-        if (ratingSortingOrder != null && priceSortingOrder != null) {
-            return movieMapper.toMovieDtoList(movieService.findAll(priceSortingOrder, ratingSortingOrder));
+        if (movieRequest.getRatingSortingOrder() != null && movieRequest.getPriceSortingOrder() != null) {
+            return movieMapper.toMovieDtoList(movieService.findAll(
+                    movieRequest.getPriceSortingOrder(), movieRequest.getRatingSortingOrder()));
         }
-        if (ratingSortingOrder != null){
-            return movieMapper.toMovieDtoList(movieService.findAll(ratingSortingOrder));
+        if (movieRequest.getRatingSortingOrder() != null) {
+            return movieMapper.toMovieDtoList(movieService.findAll(movieRequest.getRatingSortingOrder()));
         }
-        return movieMapper.toMovieDtoList(movieService.findAll(priceSortingOrder));
+        return movieMapper.toMovieDtoList(movieService.findAll(movieRequest.getPriceSortingOrder()));
     }
 
     @GetMapping("/random")
@@ -46,21 +44,27 @@ public class MovieController {
         return movieMapper.toMovieDtoList(movieService.findRandomThree());
     }
 
-    @GetMapping("/genre/{genreId}")
-    protected List<MovieDto> findByGenreId(
-            @PathVariable int genreId,
-            @RequestParam(required = false) RatingSortingOrder ratingSortingOrder,
-            @RequestParam(required = false) PriceSortingOrder priceSortingOrder) {
+    @GetMapping("/genres/{genreId}")
+    protected List<MovieDto> findByGenreId(@PathVariable int genreId, MovieRequest movieRequest) {
 
-        if (ratingSortingOrder == null && priceSortingOrder == null) {
+        if (movieRequest.getRatingSortingOrder() == null && movieRequest.getPriceSortingOrder() == null) {
             return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId));
         }
-        if (ratingSortingOrder != null && priceSortingOrder != null) {
-            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, priceSortingOrder, ratingSortingOrder));
+        if (movieRequest.getRatingSortingOrder() != null && movieRequest.getPriceSortingOrder() != null) {
+            return movieMapper.toMovieDtoList(movieService.findByGenreId(
+                    genreId,
+                    movieRequest.getPriceSortingOrder(),
+                    movieRequest.getRatingSortingOrder()));
         }
-        if (ratingSortingOrder != null){
-            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, ratingSortingOrder));
+        if (movieRequest.getRatingSortingOrder() != null) {
+            return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, movieRequest.getRatingSortingOrder()));
         }
-        return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, priceSortingOrder));
+        return movieMapper.toMovieDtoList(movieService.findByGenreId(genreId, movieRequest.getPriceSortingOrder()));
+    }
+
+    @Data
+    public static class MovieRequest {
+        private RatingSortingOrder ratingSortingOrder;
+        private PriceSortingOrder priceSortingOrder;
     }
 }
