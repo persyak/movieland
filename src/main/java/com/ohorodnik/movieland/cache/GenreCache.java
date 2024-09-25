@@ -3,7 +3,6 @@ package com.ohorodnik.movieland.cache;
 import com.ohorodnik.movieland.entity.Genre;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GenreCache {
 
@@ -11,6 +10,4 @@ public interface GenreCache {
     }
 
     List<Genre> findAll();
-
-    Optional<Genre> findById(int id);
 }

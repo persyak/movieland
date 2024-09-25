@@ -9,29 +9,27 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Cache
 @RequiredArgsConstructor
 public class GenreCacheImpl implements GenreCache {
 
-    private Map<Integer, Genre> genres = new ConcurrentHashMap<>();
+    private final List<Genre> genres = new CopyOnWriteArrayList<>();
 
     private final GenreRepository genreRepository;
 
     @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
     private void updateCache() {
         genres.clear();
-        genreRepository.findAll().forEach(genre -> genres.put(genre.getId(), genre));
+        genres.addAll(genreRepository.findAll());
     }
 
     public List<Genre> findAll() {
         List<Genre> returnedCachedValues = new ArrayList<>();
 
         //TODO: think what to do with clone, should be removed.
-        genres.values().forEach(genre -> {
+        genres.forEach(genre -> {
             try {
                 returnedCachedValues.add(genre.clone());
             } catch (CloneNotSupportedException e) {
@@ -40,9 +38,5 @@ public class GenreCacheImpl implements GenreCache {
         });
 
         return returnedCachedValues;
-    }
-
-    public Optional<Genre> findById(int id) {
-        return Optional.ofNullable(genres.get(id));
     }
 }
