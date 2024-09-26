@@ -6,16 +6,26 @@ import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.repository.GenreRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Immutable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Cache
 @RequiredArgsConstructor
 public class GenreCacheImpl implements GenreCache {
 
+    ReadWriteLock lock = new ReentrantReadWriteLock();
+    Lock readLock = lock.readLock();
+    Lock writeLock = lock.writeLock();
+
+    //TODO: I think, CopyOnWriteArrayList is not needed anymore as we use reentrantlocks.
+    @Immutable
     private final List<Genre> genres = new CopyOnWriteArrayList<>();
 
     private final GenreRepository genreRepository;
@@ -28,22 +38,21 @@ public class GenreCacheImpl implements GenreCache {
     @PostConstruct
     @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
     private void updateCache() {
-        genres.clear();
-        genres.addAll(genreRepository.findAll());
+        writeLock.lock();
+        try {
+            genres.clear();
+            genres.addAll(genreRepository.findAll());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public List<Genre> findAll() {
-        List<Genre> returnedCachedValues = new ArrayList<>();
-
-        //TODO: think what to do with clone, should be removed.
-        genres.forEach(genre -> {
-            try {
-                returnedCachedValues.add(genre.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        return returnedCachedValues;
+        readLock.lock();
+        try {
+            return new ArrayList<>(genres);
+        } finally {
+            readLock.unlock();
+        }
     }
 }

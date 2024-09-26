@@ -11,21 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Data
 @Entity
 @Table(name = "genre", schema = "movieland")
-public class Genre implements Cloneable {
+public final class Genre {
 
     @Id
-    private int id;
+    private final int id;
     @NotBlank(message = "Please add item name")
     @Size(min = 3)
-    private String name;
-
-    //TODO: define what to do with it and with cache.
-    public Genre clone() throws CloneNotSupportedException {
-        return (Genre) super.clone();
-    }
+    private final String name;
 }
