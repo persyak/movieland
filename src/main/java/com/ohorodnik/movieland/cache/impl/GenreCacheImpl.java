@@ -2,7 +2,8 @@ package com.ohorodnik.movieland.cache.impl;
 
 import com.ohorodnik.movieland.annotation.Cache;
 import com.ohorodnik.movieland.cache.GenreCache;
-import com.ohorodnik.movieland.entity.Genre;
+import com.ohorodnik.movieland.dto.GenreDto;
+import com.ohorodnik.movieland.mapper.GenreMapper;
 import com.ohorodnik.movieland.repository.GenreRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,10 @@ public class GenreCacheImpl implements GenreCache {
 
     //TODO: I think, CopyOnWriteArrayList is not needed anymore as we use reentrantlocks.
     @Immutable
-    private final List<Genre> genres = new CopyOnWriteArrayList<>();
+    private final List<GenreDto> genres = new CopyOnWriteArrayList<>();
 
     private final GenreRepository genreRepository;
+    private final GenreMapper genreMapper;
 
     /**
      * @PostConstruct + @Scheduled means, that cash update will be called 1st time before web server starts and
@@ -41,13 +43,13 @@ public class GenreCacheImpl implements GenreCache {
         writeLock.lock();
         try {
             genres.clear();
-            genres.addAll(genreRepository.findAll());
+            genres.addAll(genreMapper.toGenreDtoList(genreRepository.findAll()));
         } finally {
             writeLock.unlock();
         }
     }
 
-    public List<Genre> findAll() {
+    public List<GenreDto> findAll() {
         readLock.lock();
         try {
             return new ArrayList<>(genres);

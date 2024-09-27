@@ -1,7 +1,6 @@
 package com.ohorodnik.movieland.web.controller;
 
 import com.ohorodnik.movieland.dto.GenreDto;
-import com.ohorodnik.movieland.mapper.GenreMapper;
 import com.ohorodnik.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -18,10 +17,9 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService genreService;
-    private final GenreMapper genreMapper;
 
     @GetMapping
     protected List<GenreDto> findAll() {
-        return genreMapper.toGenreDtoList(genreService.findAll());
+        return genreService.findAll();
     }
 }

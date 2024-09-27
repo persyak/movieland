@@ -1,6 +1,6 @@
 package com.ohorodnik.movieland.cache;
 
-import com.ohorodnik.movieland.entity.Genre;
+import com.ohorodnik.movieland.dto.GenreDto;
 
 import java.util.List;
 
@@ -9,5 +9,5 @@ public interface GenreCache {
     private void updateCache() {
     }
 
-    List<Genre> findAll();
+    List<GenreDto> findAll();
 }

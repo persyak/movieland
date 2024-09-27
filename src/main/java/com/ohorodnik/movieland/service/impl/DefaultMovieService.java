@@ -1,6 +1,7 @@
 package com.ohorodnik.movieland.service.impl;
 
-import com.ohorodnik.movieland.entity.Movie;
+import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
 import com.ohorodnik.movieland.service.MovieService;
@@ -18,52 +19,58 @@ public class DefaultMovieService implements MovieService {
 
     private final MovieRepository movieRepository;
     private final MovieRepositoryCustom movieRepositoryCustom;
+    private final MovieMapper movieMapper;
 
     @Override
-    public List<Movie> findAll() {
-        return movieRepository.findAll();
+    public List<MovieDto> findAll() {
+        return movieMapper.toMovieDtoList(movieRepository.findAll());
     }
 
     @Override
-    public List<Movie> findAll(PriceSortingOrder priceSortingOrder) {
-        return movieRepository.findAll(Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price"));
+    public List<MovieDto> findAll(PriceSortingOrder priceSortingOrder) {
+        return movieMapper.toMovieDtoList(
+                movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override
-    public List<Movie> findAll(RatingSortingOrder ratingSortingOrder) {
-        return movieRepository.findAll(Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating"));
+    public List<MovieDto> findAll(RatingSortingOrder ratingSortingOrder) {
+        return movieMapper.toMovieDtoList(
+                movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
     }
 
     @Override
-    public List<Movie> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder) {
-        return movieRepositoryCustom.findAndSortByPriceAndRating(priceSortingOrder.toString());
+    public List<MovieDto> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder) {
+        return movieMapper.toMovieDtoList(
+                movieRepositoryCustom.findAndSortByPriceAndRating(priceSortingOrder.toString()));
     }
 
     @Override
-    public List<Movie> findRandomThree() {
-        return movieRepository.findRandomThree();
+    public List<MovieDto> findRandomThree() {
+        return movieMapper.toMovieDtoList(movieRepository.findRandomThree());
     }
 
     @Override
-    public List<Movie> findByGenreId(int genreId) {
-        return movieRepository.findByGenres_Id(genreId);
+    public List<MovieDto> findByGenreId(int genreId) {
+        return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(genreId));
     }
 
     @Override
-    public List<Movie> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder) {
-        return movieRepository.findByGenres_Id(
-                genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price"));
+    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder) {
+        return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
+                genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override
-    public List<Movie> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder) {
-        return movieRepository.findByGenres_Id(
-                genreId, Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating"));
+    public List<MovieDto> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder) {
+        return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
+                genreId, Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
     }
 
     @Override
-    public List<Movie> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
-        return movieRepositoryCustom.findByGenreIdAndSortByPriceAndRating(
-                genreId, priceSortingOrder.toString(), ratingSortingOrder.toString());
+    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
+        return movieMapper.toMovieDtoList(movieRepositoryCustom.findByGenreIdAndSortByPriceAndRating(
+                genreId, priceSortingOrder.toString(), ratingSortingOrder.toString()));
     }
 }
