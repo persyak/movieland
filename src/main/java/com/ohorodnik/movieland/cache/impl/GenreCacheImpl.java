@@ -20,9 +20,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @RequiredArgsConstructor
 public class GenreCacheImpl implements GenreCache {
 
-    ReadWriteLock lock = new ReentrantReadWriteLock();
-    Lock readLock = lock.readLock();
-    Lock writeLock = lock.writeLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock = lock.readLock();
+    private final Lock writeLock = lock.writeLock();
 
     //TODO: I think, CopyOnWriteArrayList is not needed anymore as we use reentrantlocks.
     @Immutable

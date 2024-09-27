@@ -35,8 +35,8 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<Movie> findAll(PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
-        return movieRepositoryCustom.findAndSortByPriceAndRating(priceSortingOrder.toString(), ratingSortingOrder.toString());
+    public List<Movie> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder) {
+        return movieRepositoryCustom.findAndSortByPriceAndRating(priceSortingOrder.toString());
     }
 
     @Override

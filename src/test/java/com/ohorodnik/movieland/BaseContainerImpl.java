@@ -2,7 +2,9 @@ package com.ohorodnik.movieland;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
+import com.ohorodnik.movieland.utils.TestConfigurationToCountAllQueries;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -16,6 +18,7 @@ import static com.github.database.rider.core.api.configuration.Orthography.LOWER
 @DBUnit(caseInsensitiveStrategy = LOWERCASE,
         cacheConnection = false,
         schema = "movieland")
+@Import(TestConfigurationToCountAllQueries.class)
 public class BaseContainerImpl {
 
     private static final PostgreSQLContainer<?> container;

@@ -13,7 +13,7 @@ public interface MovieService {
 
     List<Movie> findAll(RatingSortingOrder ratingSortingOrder);
 
-    List<Movie> findAll(PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
+    List<Movie> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder);
 
     List<Movie> findRandomThree();
 

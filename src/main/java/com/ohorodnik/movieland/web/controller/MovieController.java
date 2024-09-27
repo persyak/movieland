@@ -30,8 +30,8 @@ public class MovieController {
             return movieMapper.toMovieDtoList(movieService.findAll());
         }
         if (movieRequest.getRatingSortingOrder() != null && movieRequest.getPriceSortingOrder() != null) {
-            return movieMapper.toMovieDtoList(movieService.findAll(
-                    movieRequest.getPriceSortingOrder(), movieRequest.getRatingSortingOrder()));
+            return movieMapper.toMovieDtoList(movieService.findAllCustomPriceAndRatingSorting(
+                    movieRequest.getPriceSortingOrder()));
         }
         if (movieRequest.getRatingSortingOrder() != null) {
             return movieMapper.toMovieDtoList(movieService.findAll(movieRequest.getRatingSortingOrder()));

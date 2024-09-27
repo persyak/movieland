@@ -21,8 +21,8 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
     private final EntityManager entityManager;
 
     @Override
-    public List<Movie> findAndSortByPriceAndRating(String priceSortingOrder, String ratingSortingOrder) {
-        return create(priceSortingOrder, ratingSortingOrder).getResultList();
+    public List<Movie> findAndSortByPriceAndRating(String priceSortingOrder) {
+        return create(priceSortingOrder).getResultList();
     }
 
     //TODO: implement method order by price and rating
@@ -31,7 +31,7 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
         return List.of();
     }
 
-    private TypedQuery<Movie> create(String priceSortingOrder, String ratingSortingOrder) {
+    private TypedQuery<Movie> create(String priceSortingOrder) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Movie> criteriaQuery = criteriaBuilder.createQuery(Movie.class);
 
