@@ -16,7 +16,7 @@ import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MovieRepositoryTest extends BaseContainerImpl {
+public class MovieRepositoryITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
 
