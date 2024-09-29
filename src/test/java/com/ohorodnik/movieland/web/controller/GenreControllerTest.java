@@ -1,7 +1,7 @@
 package com.ohorodnik.movieland.web.controller;
 
-import com.ohorodnik.movieland.entity.Genre;
-import com.ohorodnik.movieland.service.impl.DefaultGenreService;
+import com.ohorodnik.movieland.dto.GenreDto;
+import com.ohorodnik.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,33 +25,33 @@ public class GenreControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private DefaultGenreService defaultGenreService;
+    private GenreService genreService;
 
     @BeforeEach
     public void setup() {
 
-        Genre firstGenre = Genre.builder()
+        GenreDto firstGenreDto = GenreDto.builder()
                 .id(1)
                 .name("testGenre1")
                 .build();
 
-        Genre secondGenre = Genre.builder()
+        GenreDto secondGenreDto = GenreDto.builder()
                 .id(2)
                 .name("testGenre2")
                 .build();
 
-        Genre thirdGenre = Genre.builder()
+        GenreDto thirdGenreDto = GenreDto.builder()
                 .id(3)
                 .name("testGenre3")
                 .build();
 
-        Mockito.when(defaultGenreService.findAll()).thenReturn(List.of(firstGenre, secondGenre, thirdGenre));
+        Mockito.when(genreService.findAll()).thenReturn(List.of(firstGenreDto, secondGenreDto, thirdGenreDto));
     }
 
     @Test
     public void testFindAll() throws Exception {
 
-        mockMvc.perform(get("/api/v1/genre")
+        mockMvc.perform(get("/api/v1/genres")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(3))
