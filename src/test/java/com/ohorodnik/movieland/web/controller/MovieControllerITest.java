@@ -2,30 +2,25 @@ package com.ohorodnik.movieland.web.controller;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
-import com.ohorodnik.movieland.utils.TestConfigurationToCountAllQueries;
-import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Year;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
+import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-//TODO: try moving @Import to BaseContainerImpl. Try to make this by default
-@Import(TestConfigurationToCountAllQueries.class)
 public class MovieControllerITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
-//    private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
-//    private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
+    private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,9 +29,9 @@ public class MovieControllerITest extends BaseContainerImpl {
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
     public void testFindAll() throws Exception {
 
-        SQLStatementCountValidator.reset();
+        reset();
 
-        mockMvc.perform(get("/api/v1/movie")
+        mockMvc.perform(get("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
@@ -55,9 +50,9 @@ public class MovieControllerITest extends BaseContainerImpl {
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByRatingDesc() throws Exception {
 
-        SQLStatementCountValidator.reset();
+        reset();
 
-        mockMvc.perform(get("/api/v1/movie?rating=desc")
+        mockMvc.perform(get("/api/v1/movies?ratingSortingOrder=desc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
@@ -76,9 +71,9 @@ public class MovieControllerITest extends BaseContainerImpl {
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceAsc() throws Exception {
 
-        SQLStatementCountValidator.reset();
+        reset();
 
-        mockMvc.perform(get("/api/v1/movie?price=asc")
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=asc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
@@ -97,9 +92,51 @@ public class MovieControllerITest extends BaseContainerImpl {
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceDesc() throws Exception {
 
-        SQLStatementCountValidator.reset();
+        reset();
 
-        mockMvc.perform(get("/api/v1/movie?price=desc")
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(5))
+                .andExpect(jsonPath("$[0].id").value("3"))
+                .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
+                .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
+                .andExpect(jsonPath("$[0].rating").value("8.6"))
+                .andExpect(jsonPath("$[0].price").value("200.6"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    public void testFindAllSortedByPriceAscAndRatingDesc() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=asc&ratingSortingOrder=desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(5))
+                .andExpect(jsonPath("$[0].id").value("5"))
+                .andExpect(jsonPath("$[0].nameUa").value("1+1"))
+                .andExpect(jsonPath("$[0].nameNative").value("Intouchables"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(2011).toString()))
+                .andExpect(jsonPath("$[0].rating").value("8.3"))
+                .andExpect(jsonPath("$[0].price").value("120.0"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath5"));
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    public void testFindAllSortedByPriceDescAndRatingDesc() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=desc&ratingSortingOrder=desc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
@@ -118,9 +155,9 @@ public class MovieControllerITest extends BaseContainerImpl {
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
     public void testGetThreeRandomMovies() throws Exception {
 
-        SQLStatementCountValidator.reset();
+        reset();
 
-        mockMvc.perform(get("/api/v1/movie/random")
+        mockMvc.perform(get("/api/v1/movies/random")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(3));
@@ -128,30 +165,87 @@ public class MovieControllerITest extends BaseContainerImpl {
         assertSelectCount(1);
     }
 
-//    @Test
-//    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET}, disableConstraints = true,
-//            skipCleaningFor = "flyway_schema_history")
-//    public void testFindByGenreId() {
-//
-//        SQLStatementCountValidator.reset();
-//
-//        await().atMost(7000, TimeUnit.MILLISECONDS).untilAsserted(
-//                () -> mockMvc.perform(get("/api/v1/movie/genre/1")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.size()").value(2))
-//                .andExpect(jsonPath("$[0].id").value("2"))
-//                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
-//                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-//                .andExpect(jsonPath("$[0].yearOfRelease").value(LocalDate.of(1999, 1, 1)
-//                        .toString()))
-//                .andExpect(jsonPath("$[0].description").value("testDescription2"))
-//                .andExpect(jsonPath("$[0].rating").value("9.0"))
-//                .andExpect(jsonPath("$[0].price").value("134.67"))
-//                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"))
-//                .andExpect(jsonPath("$[0].votes").value("100"))
-//        );
-//
-//        assertSelectCount(2);
-//    }
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreId() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].id").value("4"))
+                .andExpect(jsonPath("$[0].nameUa").value("Список Шиндлера"))
+                .andExpect(jsonPath("$[0].nameNative").value("Schindler's List"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1993).toString()))
+                .andExpect(jsonPath("$[0].rating").value("8.7"))
+                .andExpect(jsonPath("$[0].price").value("150.5"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath4"));
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreIdSortedByRatingDesc() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/1?ratingSortingOrder=desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].id").value("2"))
+                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
+                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
+                .andExpect(jsonPath("$[0].rating").value("9.0"))
+                .andExpect(jsonPath("$[0].price").value("134.67"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreIdSortedByPriceAsc() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/1?priceSortingOrder=asc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].id").value("2"))
+                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
+                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
+                .andExpect(jsonPath("$[0].rating").value("9.0"))
+                .andExpect(jsonPath("$[0].price").value("134.67"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreIdSortedByPriceDesc() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/1?priceSortingOrder=desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].id").value("3"))
+                .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
+                .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
+                .andExpect(jsonPath("$[0].rating").value("8.6"))
+                .andExpect(jsonPath("$[0].price").value("200.6"))
+                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+
+        assertSelectCount(1);
+    }
 }
