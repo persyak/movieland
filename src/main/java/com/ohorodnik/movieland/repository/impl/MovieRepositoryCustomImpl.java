@@ -3,7 +3,6 @@ package com.ohorodnik.movieland.repository.impl;
 import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
@@ -22,7 +21,7 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
 
     @Override
     public List<Movie> findAndSortByPriceAndRating(String priceSortingOrder) {
-        return create(priceSortingOrder).getResultList();
+        return entityManager.createQuery(create(priceSortingOrder)).getResultList();
     }
 
     //TODO: implement method order by price and rating
@@ -31,7 +30,7 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
         return List.of();
     }
 
-    private TypedQuery<Movie> create(String priceSortingOrder) {
+    CriteriaQuery<Movie> create(String priceSortingOrder) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Movie> criteriaQuery = criteriaBuilder.createQuery(Movie.class);
 
@@ -48,6 +47,6 @@ public class MovieRepositoryCustomImpl implements MovieRepositoryCustom {
 
         criteriaQuery.orderBy(movieList);
 
-        return entityManager.createQuery(criteriaQuery);
+        return criteriaQuery;
     }
 }
