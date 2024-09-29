@@ -12,10 +12,6 @@ import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//TODO: I'm not sure it's ITest as it tests only one component - repository. Or is it possible to mock DB?
-
-//TODO: To count SQL queries I had to use datasource, so I need something liek wrapper on it. https://vladmihalcea.com/how-to-detect-the-n-plus-one-query-problem-during-testing/ or https://vladmihalcea.com/how-to-detect-the-n-plus-one-query-problem-during-testing/
-//TODO: I have moved @Import(TestConfigurationToCountAllQueries.class) to BaseCOntainerImpl class
 public class GenreRepositoryITest extends BaseContainerImpl {
 
     private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
