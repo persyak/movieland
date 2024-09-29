@@ -1,8 +1,13 @@
 package com.ohorodnik.movieland.service;
 
-import com.ohorodnik.movieland.entity.Genre;
+import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
+import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
+import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
+import com.ohorodnik.movieland.service.impl.DefaultMovieService;
+import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
+import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,11 +15,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,12 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultMovieServiceTest {
 
     @Autowired
-    private MovieService movieService;
+    private DefaultMovieService defaultMovieService;
+    @Autowired
+    private MovieMapper movieMapper;
     @MockBean
     private MovieRepository movieRepository;
-
     @MockBean
-    private GenreService genreService;
+    private MovieRepositoryCustom movieRepositoryCustom;
 
     @BeforeEach
     public void setup() {
@@ -38,7 +44,7 @@ public class DefaultMovieServiceTest {
                 .yearOfRelease(LocalDate.of(1994, 1, 1))
                 .description("testDescription1")
                 .rating(8.9)
-                .price(123.45)
+                .price(140.45)
                 .picturePath("picturePath1")
                 .votes(100)
                 .build();
@@ -79,123 +85,224 @@ public class DefaultMovieServiceTest {
                 .votes(100)
                 .build();
 
-        List<Movie> expected = new ArrayList<>();
-        expected.add(firstMovie);
-        expected.add(secondMovie);
-        expected.add(thirdMovie);
-        expected.add(fourthdMovie);
+        Mockito.when(movieRepository.findAll()).thenReturn(List.of(firstMovie, secondMovie, thirdMovie, fourthdMovie));
+        Mockito.when(movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(RatingSortingOrder.desc.toString()), "rating")))
+                .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
+        Mockito.when(movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(PriceSortingOrder.asc.toString()), "price")))
+                .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
+        Mockito.when(movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(PriceSortingOrder.desc.toString()), "price")))
+                .thenReturn(List.of(thirdMovie, fourthdMovie, secondMovie, firstMovie));
+        Mockito.when(movieRepository.findRandomThree()).thenReturn(List.of(firstMovie, secondMovie, thirdMovie));
+        Mockito.when(movieRepository.findByGenres_Id(1))
+                .thenReturn(List.of(firstMovie, secondMovie, thirdMovie, fourthdMovie));
+        Mockito.when(movieRepository.findByGenres_Id(
+                        1,
+                        Sort.by(Sort.Direction.fromString(RatingSortingOrder.desc.toString()),
+                                "rating")))
+                .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
+        Mockito.when(movieRepository.findByGenres_Id(
+                        1,
+                        Sort.by(Sort.Direction.fromString(PriceSortingOrder.asc.toString()),
+                                "price")))
+                .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
+        Mockito.when(movieRepository.findByGenres_Id(
+                        1,
+                        Sort.by(Sort.Direction.fromString(PriceSortingOrder.desc.toString()),
+                                "price")))
+                .thenReturn(List.of(thirdMovie, fourthdMovie, secondMovie, firstMovie));
 
-        Genre expectedGenre = Genre.builder()
-                .id(1)
-                .name("expectedGenre")
-                .movies(expected)
-                .build();
-        Optional<Genre> genreOptional = Optional.of(expectedGenre);
-
-        Mockito.when(movieRepository.findAll()).thenReturn(expected);
-        Mockito.when(genreService.findById(1)).thenReturn(genreOptional);
+        Mockito.when(movieRepositoryCustom.findAndSortByPriceAndRating(PriceSortingOrder.asc.toString()))
+                .thenReturn(List.of(secondMovie, firstMovie, fourthdMovie, thirdMovie));
+        Mockito.when(movieRepositoryCustom.findAndSortByPriceAndRating(PriceSortingOrder.desc.toString()))
+                .thenReturn(List.of(thirdMovie, fourthdMovie, secondMovie, firstMovie));
     }
 
     @Test
     @DisplayName("Get list of four items on findAllMovies call")
     public void whenFindAll_thenReturnListOfFourMovies() {
-        List<Movie> found = movieService.findAll(Optional.empty(), Optional.empty());
-        Movie actual = found.getFirst();
+        List<MovieDto> found = defaultMovieService.findAll();
+        MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(1, actual.getId());
         assertEquals("Втеча з Шоушенка", actual.getNameUa());
         assertEquals("The Shawshank Redemption", actual.getNameNative());
-        assertEquals(LocalDate.of(1994, 1, 1), actual.getYearOfRelease());
-        assertEquals("testDescription1", actual.getDescription());
+        assertEquals(Year.of(1994), actual.getYearOfRelease());
         assertEquals(8.9, actual.getRating());
-        assertEquals(123.45, actual.getPrice());
+        assertEquals(140.45, actual.getPrice());
         assertEquals("picturePath1", actual.getPicturePath());
-        assertEquals(100, actual.getVotes());
     }
 
     @Test
     @DisplayName("Return list of movies sorted by rating in desc when requested")
     public void whenFindAllWithRatingDesc_thenReturnSortedListByRatingDesc() {
-        List<Movie> found = movieService.findAll(Optional.of("desc"), Optional.empty());
-        Movie actual = found.getFirst();
+        List<MovieDto> found = defaultMovieService.findAll(RatingSortingOrder.desc);
+        MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(2, actual.getId());
         assertEquals("Зелена миля", actual.getNameUa());
         assertEquals("The Green Mile", actual.getNameNative());
-        assertEquals(LocalDate.of(1999, 1, 1), actual.getYearOfRelease());
-        assertEquals("testDescription2", actual.getDescription());
+        assertEquals(Year.of(1999), actual.getYearOfRelease());
         assertEquals(9.0, actual.getRating());
         assertEquals(134.67, actual.getPrice());
         assertEquals("picturePath2", actual.getPicturePath());
-        assertEquals(100, actual.getVotes());
+
+        assertEquals(1, found.get(1).getId());
     }
 
     @Test
     @DisplayName("Return list of movies sorted by price in asc when requested")
     public void whenFindAllWithPriceAsc_thenReturnSortedListByPriceAsc() {
-        List<Movie> found = movieService.findAll(Optional.empty(), Optional.of("asc"));
-        Movie actual = found.getFirst();
+        List<MovieDto> found = defaultMovieService.findAll(PriceSortingOrder.asc);
+        MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
-        assertEquals(1, actual.getId());
-        assertEquals("Втеча з Шоушенка", actual.getNameUa());
-        assertEquals("The Shawshank Redemption", actual.getNameNative());
-        assertEquals(LocalDate.of(1994, 1, 1), actual.getYearOfRelease());
-        assertEquals("testDescription1", actual.getDescription());
-        assertEquals(8.9, actual.getRating());
-        assertEquals(123.45, actual.getPrice());
-        assertEquals("picturePath1", actual.getPicturePath());
-        assertEquals(100, actual.getVotes());
+        assertEquals(2, actual.getId());
+        assertEquals("Зелена миля", actual.getNameUa());
+        assertEquals("The Green Mile", actual.getNameNative());
+        assertEquals(Year.of(1999), actual.getYearOfRelease());
+        assertEquals(9.0, actual.getRating());
+        assertEquals(134.67, actual.getPrice());
+        assertEquals("picturePath2", actual.getPicturePath());
+
+        assertEquals(1, found.get(1).getId());
     }
 
     @Test
     @DisplayName("Return list of movies sorted by price in desc when requested")
-    public void whenFindAllWithPriceDesc_thenReturnSortedListByPriceDesc() {
-        List<Movie> found = movieService.findAll(Optional.empty(), Optional.of("desc"));
-        Movie actual = found.getFirst();
+    public void whenFindAllWithPriceAsc_thenReturnSortedListByPriceDesc() {
+        List<MovieDto> found = defaultMovieService.findAll(PriceSortingOrder.desc);
+        MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
         assertEquals(3, actual.getId());
         assertEquals("Форест Гамп", actual.getNameUa());
         assertEquals("Forrest Gump", actual.getNameNative());
-        assertEquals(LocalDate.of(1994, 1, 1), actual.getYearOfRelease());
-        assertEquals("testDescription3", actual.getDescription());
+        assertEquals(Year.of(1994), actual.getYearOfRelease());
         assertEquals(8.6, actual.getRating());
         assertEquals(200.60, actual.getPrice());
         assertEquals("picturePath3", actual.getPicturePath());
-        assertEquals(100, actual.getVotes());
+
+        assertEquals(4, found.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("Return list of movies sorted by price in asc and rating when requested")
+    public void testFindAllCustomPriceAscAndRatingSorting() {
+        List<MovieDto> found = defaultMovieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.asc);
+        MovieDto actual = found.getFirst();
+
+        assertEquals(4, found.size());
+        assertEquals(2, actual.getId());
+        assertEquals("Зелена миля", actual.getNameUa());
+        assertEquals("The Green Mile", actual.getNameNative());
+        assertEquals(Year.of(1999), actual.getYearOfRelease());
+        assertEquals(9.0, actual.getRating());
+        assertEquals(134.67, actual.getPrice());
+        assertEquals("picturePath2", actual.getPicturePath());
+
+        assertEquals(1, found.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("Return list of movies sorted by price in desc and rating when requested")
+    public void testFindAllCustomPriceDescAndRatingSorting() {
+        List<MovieDto> found = defaultMovieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.desc);
+        MovieDto actual = found.getFirst();
+
+        assertEquals(4, found.size());
+        assertEquals(3, actual.getId());
+        assertEquals("Форест Гамп", actual.getNameUa());
+        assertEquals("Forrest Gump", actual.getNameNative());
+        assertEquals(Year.of(1994), actual.getYearOfRelease());
+        assertEquals(8.6, actual.getRating());
+        assertEquals(200.60, actual.getPrice());
+        assertEquals("picturePath3", actual.getPicturePath());
+
+        assertEquals(4, found.get(1).getId());
     }
 
     @Test
     @DisplayName("Get list of three random movies")
     public void whenFindThreeRandomMoviesRequested_thenReturnListOfThreeMovies() {
-        assertEquals(3, movieService.findRandomThree().size());
+        assertEquals(3, defaultMovieService.findRandomThree().size());
     }
 
     @Test
     @DisplayName("Get list of four movies by genre id 1")
     public void whenFindMoviesByGenreId_thenReturnListOfFourMovies() {
-        List<Movie> actuals = movieService.findByGenreId(1);
-        assertEquals(4, actuals.size());
+        List<MovieDto> found = defaultMovieService.findByGenreId(1);
+        assertEquals(4, found.size());
 
-        Movie actual = actuals.get(1);
+        MovieDto actual = found.getFirst();
+
+        assertEquals(1, actual.getId());
+        assertEquals("Втеча з Шоушенка", actual.getNameUa());
+        assertEquals("The Shawshank Redemption", actual.getNameNative());
+        assertEquals(Year.of(1994), actual.getYearOfRelease());
+        assertEquals(8.9, actual.getRating());
+        assertEquals(140.45, actual.getPrice());
+        assertEquals("picturePath1", actual.getPicturePath());
+    }
+
+    @Test
+    @DisplayName("Get list of four movies by genre id 1, sorted by rating in desc")
+    public void whenFindMoviesByGenreIdAndRatingSortingOrderDesc_thenReturnListOfFourMoviesSortedByRatingDesc() {
+        List<MovieDto> found = defaultMovieService.findByGenreId(1, RatingSortingOrder.desc);
+        assertEquals(4, found.size());
+
+        MovieDto actual = found.getFirst();
 
         assertEquals(2, actual.getId());
         assertEquals("Зелена миля", actual.getNameUa());
         assertEquals("The Green Mile", actual.getNameNative());
-        assertEquals(LocalDate.of(1999, 1, 1), actual.getYearOfRelease());
-        assertEquals("testDescription2", actual.getDescription());
+        assertEquals(Year.of(1999), actual.getYearOfRelease());
         assertEquals(9.0, actual.getRating());
         assertEquals(134.67, actual.getPrice());
         assertEquals("picturePath2", actual.getPicturePath());
-        assertEquals(100, actual.getVotes());
+
+        assertEquals(1, found.get(1).getId());
     }
 
     @Test
-    @DisplayName("Get empty list when movies by genre do not exist")
-    public void whenNoMoviesAvailableByGenre_thenGetEmptyList() {
-        assertEquals(0, movieService.findByGenreId(2).size());
+    @DisplayName("Get list of four movies by genre id 1, sorted by price in asc")
+    public void whenFindMoviesByGenreIdAndPriceSortingOrderAsc_thenReturnListOfFourMoviesSortedByPriceAsc() {
+        List<MovieDto> found = defaultMovieService.findByGenreId(1, PriceSortingOrder.asc);
+        assertEquals(4, found.size());
+
+        MovieDto actual = found.getFirst();
+
+        assertEquals(2, actual.getId());
+        assertEquals("Зелена миля", actual.getNameUa());
+        assertEquals("The Green Mile", actual.getNameNative());
+        assertEquals(Year.of(1999), actual.getYearOfRelease());
+        assertEquals(9.0, actual.getRating());
+        assertEquals(134.67, actual.getPrice());
+        assertEquals("picturePath2", actual.getPicturePath());
+
+        assertEquals(1, found.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("Get list of four movies by genre id 1, sorted by price in desc")
+    public void whenFindMoviesByGenreIdAndPriceSortingOrderDesc_thenReturnListOfFourMoviesSortedByPriceDesc() {
+        List<MovieDto> found = defaultMovieService.findByGenreId(1, PriceSortingOrder.desc);
+        assertEquals(4, found.size());
+
+        MovieDto actual = found.getFirst();
+
+        assertEquals(3, actual.getId());
+        assertEquals("Форест Гамп", actual.getNameUa());
+        assertEquals("Forrest Gump", actual.getNameNative());
+        assertEquals(Year.of(1994), actual.getYearOfRelease());
+        assertEquals(8.6, actual.getRating());
+        assertEquals(200.60, actual.getPrice());
+        assertEquals("picturePath3", actual.getPicturePath());
+
+        assertEquals(4, found.get(1).getId());
     }
 }

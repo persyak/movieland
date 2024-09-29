@@ -27,17 +27,17 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<MovieDto> findAll(PriceSortingOrder priceSortingOrder) {
-        return movieMapper.toMovieDtoList(
-                movieRepository.findAll(
-                        Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
-    }
-
-    @Override
     public List<MovieDto> findAll(RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(
                 movieRepository.findAll(
                         Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
+    }
+
+    @Override
+    public List<MovieDto> findAll(PriceSortingOrder priceSortingOrder) {
+        return movieMapper.toMovieDtoList(
+                movieRepository.findAll(
+                        Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override
@@ -57,15 +57,15 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder) {
-        return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
-                genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
-    }
-
-    @Override
     public List<MovieDto> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
                 genreId, Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
+    }
+
+    @Override
+    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder) {
+        return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
+                genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override

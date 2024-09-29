@@ -9,9 +9,9 @@ import java.util.List;
 public interface MovieService {
     List<MovieDto> findAll();
 
-    List<MovieDto> findAll(PriceSortingOrder priceSortingOrder);
-
     List<MovieDto> findAll(RatingSortingOrder ratingSortingOrder);
+
+    List<MovieDto> findAll(PriceSortingOrder priceSortingOrder);
 
     List<MovieDto> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder);
 
@@ -19,9 +19,9 @@ public interface MovieService {
 
     List<MovieDto> findByGenreId(int genreId);
 
-    List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder);
-
     List<MovieDto> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder);
+
+    List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder);
 
     List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
 }
