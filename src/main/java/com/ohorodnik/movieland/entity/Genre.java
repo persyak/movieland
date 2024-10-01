@@ -11,16 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
 @Table(name = "genre", schema = "movieland")
-public final class Genre {
+public class Genre {
 
     @Id
-    private final int id;
+    private int id;
     @NotBlank(message = "Please add item name")
     @Size(min = 3)
-    private final String name;
+    private String name;
 }

@@ -6,8 +6,5 @@ import java.util.List;
 
 public interface GenreCache {
 
-    private void updateCache() {
-    }
-
     List<GenreDto> findAll();
 }
