@@ -50,11 +50,6 @@
                     <password>postgres</password>
                     <baselineOnMigrate>true</baselineOnMigrate>
                     <schemas>movieland</schemas>
-                    <locations>
-                        <location>
-                            filesystem:src/main/resources/db/migration
-                        </location>
-                    </locations>
                 </configuration>
             </plugin>
             <plugin>

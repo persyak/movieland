@@ -248,4 +248,64 @@ public class MovieControllerITest extends BaseContainerImpl {
 
         assertSelectCount(1);
     }
+
+    @Test
+    public void testFindAllWithBadSortedByRatingExpression() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies?ratingSortingOrder=fail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertSelectCount(0);
+    }
+
+    @Test
+    public void testFindAllWithBadSortedByPriceExpression() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=fail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertSelectCount(0);
+    }
+
+    @Test
+    public void testFindAllWithBadSortedByPriceAndRatingExpressions() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies?priceSortingOrder=fail&ratingSortingOrder=fail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertSelectCount(0);
+    }
+
+    @Test
+    public void testFindByGenreIdWithBadSortedByRatingExpression() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/1?ratingSortingOrder=fail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertSelectCount(0);
+    }
+
+    @Test
+    public void testFindByGenreIdWithBadSortedByPriceExpression() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movies/genres/1?priceSortingOrder=fail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertSelectCount(0);
+    }
 }

@@ -7,12 +7,10 @@ import com.ohorodnik.movieland.mapper.GenreMapper;
 import com.ohorodnik.movieland.repository.GenreRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Immutable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,9 +23,7 @@ public class GenreCacheImpl implements GenreCache {
     private final Lock readLock = lock.readLock();
     private final Lock writeLock = lock.writeLock();
 
-    //TODO: I think, CopyOnWriteArrayList is not needed anymore as we use reentrantlocks.
-    @Immutable
-    private final List<GenreDto> genres = new CopyOnWriteArrayList<>();
+    private final List<GenreDto> genreDtos = new ArrayList<>();
 
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
@@ -37,13 +33,15 @@ public class GenreCacheImpl implements GenreCache {
      * once application will be fully started (so twice), but it will save us if somebody or something will call
      * read cache immediately before case is filled.
      */
+
+    //TODO: try to think if it makes sense to do post construct somehow so it does not stop server start
     @PostConstruct
-    @Scheduled(fixedRateString = "${caching.spring.genreListTTL}")
+    @Scheduled(fixedRateString = "${caching.spring.genreListTTL}", initialDelay = 14400000)
     private void updateCache() {
         writeLock.lock();
         try {
-            genres.clear();
-            genres.addAll(genreMapper.toGenreDtoList(genreRepository.findAll()));
+            genreDtos.clear();
+            genreDtos.addAll(genreMapper.toGenreDtoList(genreRepository.findAll()));
         } finally {
             writeLock.unlock();
         }
@@ -52,7 +50,7 @@ public class GenreCacheImpl implements GenreCache {
     public List<GenreDto> findAll() {
         readLock.lock();
         try {
-            return new ArrayList<>(genres);
+            return new ArrayList<>(genreDtos);
         } finally {
             readLock.unlock();
         }
