@@ -1,6 +1,8 @@
 package com.ohorodnik.movieland.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -27,6 +29,7 @@ import java.util.List;
 public class Movie {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     @NotBlank(message = "Please add item name")
     @Size(min = 3)
