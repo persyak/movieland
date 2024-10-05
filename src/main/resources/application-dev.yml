@@ -3,6 +3,12 @@ spring:
     username: postgres
     password: postgres
     url: jdbc:postgresql://127.0.0.1:5432/movieland?currentSchema=movieland
+  jpa:
+#    Below two properties are to add to the log sql queries hibernate does.
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 management:
   endpoints:
