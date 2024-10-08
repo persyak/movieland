@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class DefaultMovieServiceTest {

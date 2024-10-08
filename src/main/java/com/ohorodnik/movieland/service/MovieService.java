@@ -17,11 +17,11 @@ public interface MovieService {
 
     List<MovieDto> findRandomThree();
 
-    List<MovieDto> findByGenreId(int genreId);
+    List<MovieDto> findByGenreId(Integer genreId);
 
-    List<MovieDto> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder);
+    List<MovieDto> findByGenreId(Integer genreId, RatingSortingOrder ratingSortingOrder);
 
-    List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder);
+    List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder);
 
-    List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
+    List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
 }

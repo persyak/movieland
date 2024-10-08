@@ -42,7 +42,7 @@ public class MovieController {
     }
 
     @GetMapping("/genres/{genreId}")
-    protected List<MovieDto> findByGenreId(@PathVariable int genreId, MovieRequest movieRequest) {
+    protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieRequest movieRequest) {
 
         if (movieRequest.getRatingSortingOrder() == null && movieRequest.getPriceSortingOrder() == null) {
             return movieService.findByGenreId(genreId);

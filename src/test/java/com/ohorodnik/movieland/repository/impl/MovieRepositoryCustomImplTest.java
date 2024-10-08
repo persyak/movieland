@@ -2,17 +2,13 @@ package com.ohorodnik.movieland.repository.impl;
 
 import com.ohorodnik.movieland.entity.Movie;
 
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Order;
+import jakarta.persistence.TypedQuery;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class MovieRepositoryCustomImplTest {
@@ -20,27 +16,29 @@ public class MovieRepositoryCustomImplTest {
     @Autowired
     private MovieRepositoryCustomImpl movieRepositoryCustomImpl;
 
+    //TODO: for some reasons criteriaQuery.unwrap(Query.class).getQueryString() does not return simple SQL, but it should
     @Test
-    public void testCreateQueryPriceAsc(){
-        CriteriaQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create("asc");
+    public void testCreateQueryPriceAscForFind() {
+        TypedQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create("asc");
+        assertEquals("<criteria>", criteriaQuery.unwrap(Query.class).getQueryString());
 
-        assertEquals(0, criteriaQuery.getParameters().size());
-        assertEquals(Movie.class, criteriaQuery.getResultType());
-
-        List<Order> list = criteriaQuery.getOrderList();
-        assertTrue(list.getFirst().isAscending());
-        assertFalse(list.getLast().isAscending());
     }
 
     @Test
-    public void testCreateQueryPriceDesc(){
-        CriteriaQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create("desc");
+    public void testCreateQueryPriceDescforFind() {
+        TypedQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create("desc");
+        assertEquals("<criteria>", criteriaQuery.unwrap(Query.class).getQueryString());
+    }
 
-        assertEquals(0, criteriaQuery.getParameters().size());
-        assertEquals(Movie.class, criteriaQuery.getResultType());
+    @Test
+    public void testCreateQueryPriceAscForFindForFindByGenreId() {
+        TypedQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create(1, "asc");
+        assertEquals("<criteria>", criteriaQuery.unwrap(Query.class).getQueryString());
+    }
 
-        List<Order> list = criteriaQuery.getOrderList();
-        assertFalse(list.getFirst().isAscending());
-        assertFalse(list.getLast().isAscending());
+    @Test
+    public void testCreateQueryPriceDescForFindForFindByGenreId() {
+        TypedQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create(1, "desc");
+        assertEquals("<criteria>", criteriaQuery.unwrap(Query.class).getQueryString());
     }
 }

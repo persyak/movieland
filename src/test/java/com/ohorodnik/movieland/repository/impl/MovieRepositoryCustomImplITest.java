@@ -16,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MovieRepositoryCustomImplITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
+    private static final String MOVIES_GENRES_DATASET = "datasets/movie/movie-genre-dataset.json";
 
     @Autowired
     private MovieRepositoryCustomImpl movieRepositoryCustomImpl;
 
     @Test
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
-    public void testDindAndSortByPriceAndRatingWhenPriceIsAsc() {
+    public void testFindAndSortByPriceAndRatingWhenPriceIsAsc() {
         reset();
 
         List<Movie> moviesList = movieRepositoryCustomImpl.findAndSortByPriceAndRating("asc");
@@ -45,12 +46,60 @@ public class MovieRepositoryCustomImplITest extends BaseContainerImpl {
 
     @Test
     @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
-    public void testDindAndSortByPriceAndRatingWhenPriceIsDesc() {
+    public void testFindAndSortByPriceAndRatingWhenPriceIsDesc() {
         reset();
 
         List<Movie> moviesList = movieRepositoryCustomImpl.findAndSortByPriceAndRating("desc");
 
         assertEquals(5, moviesList.size());
+
+        Movie actual = moviesList.getFirst();
+        assertEquals(3, actual.getId());
+        assertEquals("Форест Гамп", actual.getNameUa());
+        assertEquals("Forrest Gump", actual.getNameNative());
+        assertEquals(LocalDate.of(1994, 1, 1), actual.getYearOfRelease());
+        assertEquals("testDescription3", actual.getDescription());
+        assertEquals(8.6, actual.getRating());
+        assertEquals(200.60, actual.getPrice());
+        assertEquals("picturePath3", actual.getPicturePath());
+        assertEquals(100, actual.getVotes());
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIES_GENRES_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreIdAndSortByPriceAndRatingWhenPriceIsAsc() {
+        reset();
+
+        List<Movie> moviesList = movieRepositoryCustomImpl
+                .findByGenreIdAndSortByPriceAndRating(1, "asc");
+
+        assertEquals(2, moviesList.size());
+
+        Movie actual = moviesList.getFirst();
+        assertEquals(2, actual.getId());
+        assertEquals("Зелена миля", actual.getNameUa());
+        assertEquals("The Green Mile", actual.getNameNative());
+        assertEquals(LocalDate.of(1999, 1, 1), actual.getYearOfRelease());
+        assertEquals("testDescription2", actual.getDescription());
+        assertEquals(9.0, actual.getRating());
+        assertEquals(134.67, actual.getPrice());
+        assertEquals("picturePath2", actual.getPicturePath());
+        assertEquals(100, actual.getVotes());
+
+        assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIES_GENRES_DATASET}, skipCleaningFor = "flyway_schema_history")
+    public void testFindByGenreIdAndSortByPriceAndRatingWhenPriceIsDesc() {
+        reset();
+
+        List<Movie> moviesList = movieRepositoryCustomImpl
+                .findByGenreIdAndSortByPriceAndRating(1, "desc");
+
+        assertEquals(2, moviesList.size());
 
         Movie actual = moviesList.getFirst();
         assertEquals(3, actual.getId());

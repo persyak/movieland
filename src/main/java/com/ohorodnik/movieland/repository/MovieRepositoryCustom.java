@@ -8,5 +8,5 @@ public interface MovieRepositoryCustom {
 
     List<Movie> findAndSortByPriceAndRating(String priceSortingOrder);
 
-    List<Movie> findByGenreIdAndSortByPriceAndRating(int genreId, String priceSortingOrder, String ratingSortingOrder);
+    List<Movie> findByGenreIdAndSortByPriceAndRating(Integer genreId, String priceSortingOrder);
 }

@@ -52,25 +52,25 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<MovieDto> findByGenreId(int genreId) {
+    public List<MovieDto> findByGenreId(Integer genreId) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(genreId));
     }
 
     @Override
-    public List<MovieDto> findByGenreId(int genreId, RatingSortingOrder ratingSortingOrder) {
+    public List<MovieDto> findByGenreId(Integer genreId, RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
                 genreId, Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
     }
 
     @Override
-    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder) {
+    public List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
                 genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override
-    public List<MovieDto> findByGenreId(int genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
+    public List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepositoryCustom.findByGenreIdAndSortByPriceAndRating(
-                genreId, priceSortingOrder.toString(), ratingSortingOrder.toString()));
+                genreId, priceSortingOrder.toString()));
     }
 }
