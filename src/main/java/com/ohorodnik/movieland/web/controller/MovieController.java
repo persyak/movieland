@@ -4,8 +4,9 @@ import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +23,18 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected List<MovieDto> findAll(MovieRequest movieRequest) {
+    protected List<MovieDto> findAll(MovieSortingRequest movieSortingRequest) {
 
-        if (movieRequest.getRatingSortingOrder() == null && movieRequest.getPriceSortingOrder() == null) {
+        if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
             return movieService.findAll();
         }
-        if (movieRequest.getRatingSortingOrder() != null && movieRequest.getPriceSortingOrder() != null) {
-            return movieService.findAllCustomPriceAndRatingSorting(movieRequest.getPriceSortingOrder());
+        if (movieSortingRequest.getRatingSortingOrder() != null && movieSortingRequest.getPriceSortingOrder() != null) {
+            return movieService.findAllCustomPriceAndRatingSorting(movieSortingRequest.getPriceSortingOrder());
         }
-        if (movieRequest.getRatingSortingOrder() != null) {
-            return movieService.findAll(movieRequest.getRatingSortingOrder());
+        if (movieSortingRequest.getRatingSortingOrder() != null) {
+            return movieService.findAll(movieSortingRequest.getRatingSortingOrder());
         }
-        return movieService.findAll(movieRequest.getPriceSortingOrder());
+        return movieService.findAll(movieSortingRequest.getPriceSortingOrder());
     }
 
     @GetMapping("/random")
@@ -42,23 +43,24 @@ public class MovieController {
     }
 
     @GetMapping("/genres/{genreId}")
-    protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieRequest movieRequest) {
+    protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieSortingRequest movieSortingRequest) {
 
-        if (movieRequest.getRatingSortingOrder() == null && movieRequest.getPriceSortingOrder() == null) {
+        if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
             return movieService.findByGenreId(genreId);
         }
-        if (movieRequest.getRatingSortingOrder() != null && movieRequest.getPriceSortingOrder() != null) {
+        if (movieSortingRequest.getRatingSortingOrder() != null && movieSortingRequest.getPriceSortingOrder() != null) {
             return movieService.findByGenreId(
-                    genreId, movieRequest.getPriceSortingOrder(), movieRequest.getRatingSortingOrder());
+                    genreId, movieSortingRequest.getPriceSortingOrder(), movieSortingRequest.getRatingSortingOrder());
         }
-        if (movieRequest.getRatingSortingOrder() != null) {
-            return movieService.findByGenreId(genreId, movieRequest.getRatingSortingOrder());
+        if (movieSortingRequest.getRatingSortingOrder() != null) {
+            return movieService.findByGenreId(genreId, movieSortingRequest.getRatingSortingOrder());
         }
-        return movieService.findByGenreId(genreId, movieRequest.getPriceSortingOrder());
+        return movieService.findByGenreId(genreId, movieSortingRequest.getPriceSortingOrder());
     }
 
-    @Data
-    public static class MovieRequest {
+    @Getter
+    @Setter
+    private static class MovieSortingRequest {
         private RatingSortingOrder ratingSortingOrder;
         private PriceSortingOrder priceSortingOrder;
     }

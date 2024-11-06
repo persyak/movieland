@@ -10,11 +10,13 @@ import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DefaultMovieService implements MovieService {
 
     private final MovieRepository movieRepository;

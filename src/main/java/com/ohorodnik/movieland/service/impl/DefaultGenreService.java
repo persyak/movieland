@@ -5,11 +5,13 @@ import com.ohorodnik.movieland.dto.GenreDto;
 import com.ohorodnik.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DefaultGenreService implements GenreService {
 
     private final GenreCache genreCache;

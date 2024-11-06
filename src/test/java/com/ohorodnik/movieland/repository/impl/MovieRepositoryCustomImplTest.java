@@ -21,7 +21,6 @@ public class MovieRepositoryCustomImplTest {
     public void testCreateQueryPriceAscForFind() {
         TypedQuery<Movie> criteriaQuery = movieRepositoryCustomImpl.create("asc");
         assertEquals("<criteria>", criteriaQuery.unwrap(Query.class).getQueryString());
-
     }
 
     @Test

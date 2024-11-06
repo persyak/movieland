@@ -83,7 +83,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-<!--            Next plugin is to try and debug it's value - for study purpose-->
+<!--            Next plugin is to try and debug its value - for study purpose-->
             <plugin>
                 <groupId>org.hibernate.orm.tooling</groupId>
                 <artifactId>hibernate-enhance-maven-plugin</artifactId>
@@ -91,8 +91,13 @@
                 <executions>
                     <execution>
                         <configuration>
+<!--                            By setting the enableLazyInitialization to true, Hibernate changes the bytecode of the
+                                getter and setter methods to intercept the call and trigger the property initialization on demand.-->
                             <enableLazyInitialization>true</enableLazyInitialization>
+<!--                            The enableDirtyTracking option allows you to record which properties have changed so that
+                                the Hibernate dirty checking mechanism gets the list of changes without having to inspect every property via Java Reflection.-->
                             <enableDirtyTracking>true</enableDirtyTracking>
+<!--                            The enableAssociationManagement option tries to address the requirement of synchronizing both sides of a bidirectional association.-->
                             <enableAssociationManagement>true</enableAssociationManagement>
                         </configuration>
                         <goals>
