@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.web.controller;
 
+import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
@@ -17,12 +18,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
     private final MovieService movieService;
 
-    @GetMapping
+    @GetMapping("/movies")
     protected List<MovieDto> findAll(MovieSortingRequest movieSortingRequest) {
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
@@ -37,12 +38,12 @@ public class MovieController {
         return movieService.findAll(movieSortingRequest.getPriceSortingOrder());
     }
 
-    @GetMapping("/random")
+    @GetMapping("/movies/random")
     protected List<MovieDto> findRandomThree() {
         return movieService.findRandomThree();
     }
 
-    @GetMapping("/genres/{genreId}")
+    @GetMapping("/movies/genres/{genreId}")
     protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieSortingRequest movieSortingRequest) {
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
@@ -58,9 +59,14 @@ public class MovieController {
         return movieService.findByGenreId(genreId, movieSortingRequest.getPriceSortingOrder());
     }
 
+    @GetMapping("/movie/{movieId}")
+    protected MovieDetailsDto findById(@PathVariable Integer movieId) {
+        return movieService.findById(movieId);
+    }
+
     @Getter
     @Setter
-    private static class MovieSortingRequest {
+    public static class MovieSortingRequest {
         private RatingSortingOrder ratingSortingOrder;
         private PriceSortingOrder priceSortingOrder;
     }

@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.mapper;
 
+import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
 import org.mapstruct.Mapper;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {GenreMapper.class, CountryMapper.class, ReviewMapper.class})
 public interface MovieMapper {
 
     @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapYearOfRelease")
@@ -22,4 +23,7 @@ public interface MovieMapper {
     default Year mapYearOfRelease(LocalDate yearOfRelease) {
         return Year.from(yearOfRelease);
     }
+
+    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapYearOfRelease")
+    MovieDetailsDto toMovieDetailsDto(Movie movie);
 }

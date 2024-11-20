@@ -9,8 +9,9 @@ import lombok.ToString;
 @Builder
 @ToString
 @EqualsAndHashCode
-public class GenreDto {
+public class ReviewDto {
 
     private Integer id;
-    private String name;
+    private UserDto user;
+    private String description;
 }

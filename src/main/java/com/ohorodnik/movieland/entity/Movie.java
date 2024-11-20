@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -15,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
 @Entity
 @Table(name = "movie", schema = "movieland")
@@ -32,11 +32,11 @@ public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
-    @NotBlank(message = "Please add item name")
+    private Integer id;
+    @NotBlank(message = "Please add movie UA name")
     @Size(min = 3)
     private String nameUa;
-    @NotBlank(message = "Please add item name")
+    @NotBlank(message = "Please add movie native name")
     @Size(min = 3)
     private String nameNative;
     @Builder.Default
@@ -51,8 +51,21 @@ public class Movie {
     private int votes;
 
     @ManyToMany
+    @JoinTable(name = "movie_country", schema = "movieland",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id"))
+    @Builder.Default
+    private List<Country> countries = new ArrayList<>();
+
+    @ManyToMany
     @JoinTable(name = "movie_genre", schema = "movieland",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @Builder.Default
     private List<Genre> genres = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "movie_id")
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
 }

@@ -17,13 +17,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "genre", schema = "movieland")
-public class Genre {
+@Table(name = "country", schema = "movieland")
+public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-    @NotBlank(message = "Please add genre name")
+    @NotBlank(message = "Please add country name")
     @Size(min = 3)
     private String name;
 }

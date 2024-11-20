@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.Year;
+import java.util.List;
 
 @Getter
 @Builder
 @ToString
 @EqualsAndHashCode
-public class MovieDto {
+public class MovieDetailsDto {
 
     private Integer id;
     private String nameUa;
@@ -20,4 +21,8 @@ public class MovieDto {
     private Double rating;
     private Double price;
     private String picturePath;
+
+    private List<CountryDto> countries;
+    private List<GenreDto> genres;
+    private List<ReviewDto> reviews;
 }

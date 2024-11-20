@@ -76,11 +76,11 @@
                             <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
+                    <compilerArgument>
                         <compilerArg>
                             -Amapstruct.defaultComponentModel=spring
                         </compilerArg>
-                    </compilerArgs>
+                    </compilerArgument>
                 </configuration>
             </plugin>
 <!--            Next plugin is to try and debug its value - for study purpose-->
