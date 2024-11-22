@@ -19,8 +19,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class MovieControllerITest extends BaseContainerImpl {
 
-    private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
+    private static final String MOVIES_DATASET = "datasets/movie/movie-dataset.json";
     private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
+    private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
+    private static final String MOVIE_COUNTRY_DATASET = "datasets/movie/movie-country-dataset.json";
+    private static final String COUNTRY_DATASET = "datasets/movie/country-dataset.json";
+    private static final String REVIEW_DATASET = "datasets/movie/review-dataset.json";
+    private static final String USER_DATASET = "datasets/movie/user-dataset.json";
+    private static final String RATING_DATASET = "datasets/movie/rating-dataset.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -307,5 +313,38 @@ public class MovieControllerITest extends BaseContainerImpl {
                 .andExpect(status().isBadRequest());
 
         assertSelectCount(0);
+    }
+
+    @Test
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET,
+            MOVIE_COUNTRY_DATASET, COUNTRY_DATASET, REVIEW_DATASET, USER_DATASET, RATING_DATASET},
+            skipCleaningFor = "flyway_schema_history")
+    public void testFindById() throws Exception {
+
+        reset();
+
+        mockMvc.perform(get("/api/v1/movie/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.nameUa").value("Втеча з Шоушенка"))
+                .andExpect(jsonPath("$.nameNative").value("The Shawshank Redemption"))
+                .andExpect(jsonPath("$.yearOfRelease").value(Year.of(1994).toString()))
+                .andExpect(jsonPath("$.description").value("testDescription1"))
+                .andExpect(jsonPath("$.rating").value("8.9"))
+                .andExpect(jsonPath("$.price").value("123.45"))
+                .andExpect(jsonPath("$.picturePath").value("picturePath1"))
+                .andExpect(jsonPath("$.countries.[0].id").value("1"))
+                .andExpect(jsonPath("$.countries.[0].name").value("США"))
+                .andExpect(jsonPath("$.genres.size()").value(1))
+                .andExpect(jsonPath("$.genres.[0].id").value("2"))
+                .andExpect(jsonPath("$.genres.[0].name").value("genre2"))
+                .andExpect(jsonPath("$.reviews.size()").value(2))
+                .andExpect(jsonPath("$.reviews.[0].id").value("1"))
+                .andExpect(jsonPath("$.reviews.[0].description").value("reviewDescription1"))
+                .andExpect(jsonPath("$.reviews.[0].user.id").value("1"))
+                .andExpect(jsonPath("$.reviews.[0].user.nickname").value("reviewUser1"));
+
+        assertSelectCount(6);
     }
 }

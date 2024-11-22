@@ -1,0 +1,25 @@
+{
+  "user": [
+    {
+      "id": 1,
+      "nickname": "reviewUser1",
+      "email": "user1.email@example.com",
+      "password": "GhbdroKG67H",
+      "type": "U"
+    },
+    {
+      "id": 2,
+      "nickname": "reviewUser2",
+      "email": "user2.email@example.com",
+      "password": "jhfnekwrb4JHJHb",
+      "type": "U"
+    },
+    {
+      "id": 3,
+      "nickname": "reviewUser3",
+      "email": "user3.email@example.com",
+      "password": "gjj7DGDC2ln",
+      "type": "U"
+    }
+  ]
+}

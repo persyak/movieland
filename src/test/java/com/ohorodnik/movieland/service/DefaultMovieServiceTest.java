@@ -1,7 +1,13 @@
 package com.ohorodnik.movieland.service;
 
+import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.entity.Country;
+import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.entity.Movie;
+import com.ohorodnik.movieland.entity.Review;
+import com.ohorodnik.movieland.entity.User;
+import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
@@ -20,8 +26,11 @@ import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class DefaultMovieServiceTest {
@@ -304,5 +313,58 @@ public class DefaultMovieServiceTest {
         assertEquals("picturePath3", actual.getPicturePath());
 
         assertEquals(4, found.get(1).getId());
+    }
+
+    @Test
+    public void testFindById_whenUserIsAvailable() {
+        Movie expectedMovie = Movie.builder()
+                .id(1)
+                .nameUa("Втеча з Шоушенка")
+                .nameNative("The Shawshank Redemption")
+                .yearOfRelease(LocalDate.of(1994, 1, 1))
+                .description("testDescription1")
+                .rating(8.9)
+                .price(140.45)
+                .picturePath("picturePath1")
+                .countries(List.of(Country.builder().id(1).name("США").build()))
+                .genres(List.of(Genre.builder().id(1).name("драма").build(),
+                        Genre.builder().id(2).name("кримінал").build()))
+                .reviews(List.of(
+                        Review.builder().id(1).user(User.builder().id(1).nickname("reviewUser1").build())
+                                .description("reviewDescription1").build()))
+                .build();
+
+        Mockito.when(movieRepository.findById(1)).thenReturn(Optional.of(expectedMovie));
+
+        MovieDetailsDto movieDetailsActualsDto = defaultMovieService.findById(1);
+
+        assertEquals(1, movieDetailsActualsDto.getId());
+        assertEquals("Втеча з Шоушенка", movieDetailsActualsDto.getNameUa());
+        assertEquals("The Shawshank Redemption", movieDetailsActualsDto.getNameNative());
+        assertEquals(Year.of(1994), movieDetailsActualsDto.getYearOfRelease());
+        assertEquals("testDescription1", movieDetailsActualsDto.getDescription());
+        assertEquals(8.9, movieDetailsActualsDto.getRating());
+        assertEquals(140.45, movieDetailsActualsDto.getPrice());
+        assertEquals("picturePath1", movieDetailsActualsDto.getPicturePath());
+        assertEquals(1, movieDetailsActualsDto.getCountries().getFirst().getId());
+        assertEquals("США", movieDetailsActualsDto.getCountries().getFirst().getName());
+        assertEquals(2, movieDetailsActualsDto.getGenres().size());
+        assertEquals(1, movieDetailsActualsDto.getGenres().getFirst().getId());
+        assertEquals("драма", movieDetailsActualsDto.getGenres().getFirst().getName());
+        assertEquals(1, movieDetailsActualsDto.getReviews().size());
+        assertEquals(1, movieDetailsActualsDto.getReviews().getFirst().getId());
+        assertEquals("reviewDescription1", movieDetailsActualsDto.getReviews().getFirst().getDescription());
+        assertEquals(1, movieDetailsActualsDto.getReviews().getFirst().getUser().getId());
+        assertEquals("reviewUser1", movieDetailsActualsDto.getReviews().getFirst().getUser().getNickname());
+    }
+
+    @Test
+    public void testFindById_whenUserIsNotPresent() {
+        Mockito.when(movieRepository.findById(2)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(MovieNotFoundException.class, () -> {
+            defaultMovieService.findById(2);
+        });
+        assertTrue(exception.getMessage().contains("No such movie found"));
     }
 }

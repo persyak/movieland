@@ -18,6 +18,7 @@ public class MovieDetailsDto {
     private String nameUa;
     private String nameNative;
     private Year yearOfRelease;
+    private String description;
     private Double rating;
     private Double price;
     private String picturePath;

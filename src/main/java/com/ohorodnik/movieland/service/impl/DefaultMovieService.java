@@ -2,6 +2,7 @@ package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
@@ -81,6 +82,7 @@ public class DefaultMovieService implements MovieService {
     //TODO: after we get reviews, it iterates over them and queries DB for user for each review separately.
     //TODO: define if it's possible to querie users in one select.
     public MovieDetailsDto findById(Integer movieId) {
-        return movieMapper.toMovieDetailsDto(movieRepository.findById(movieId).orElseThrow());
+        return movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
     }
 }

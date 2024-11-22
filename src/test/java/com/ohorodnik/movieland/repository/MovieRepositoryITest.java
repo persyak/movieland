@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MovieRepositoryITest extends BaseContainerImpl {
 
-    private static final String MOVIES_DATASET = "datasets/movie/movies-dataset.json";
+    private static final String MOVIES_DATASET = "datasets/movie/movie-dataset.json";
     private static final String MOVIES_GENRES_DATASET = "datasets/movie/movie-genre-dataset.json";
 
     @Autowired

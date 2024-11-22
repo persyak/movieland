@@ -1,6 +1,12 @@
 package com.ohorodnik.movieland.web.controller;
 
+import com.ohorodnik.movieland.dto.CountryDto;
+import com.ohorodnik.movieland.dto.GenreDto;
+import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.dto.ReviewDto;
+import com.ohorodnik.movieland.dto.UserDto;
+import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
@@ -258,5 +264,59 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].rating").value("8.6"))
                 .andExpect(jsonPath("$[0].price").value("200.6"))
                 .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+    }
+
+    @Test
+    public void testFindById_whenUserIsAvailable() throws Exception {
+        MovieDetailsDto expectedMovieDto = MovieDetailsDto.builder()
+                .id(1)
+                .nameUa("Втеча з Шоушенка")
+                .nameNative("The Shawshank Redemption")
+                .yearOfRelease(Year.of(1994))
+                .description("testDescription1")
+                .rating(8.9)
+                .price(140.45)
+                .picturePath("picturePath1")
+                .countries(List.of(CountryDto.builder().id(1).name("США").build()))
+                .genres(List.of(GenreDto.builder().id(1).name("genre1").build(),
+                        GenreDto.builder().id(2).name("genre2").build()))
+                .reviews(List.of(
+                        ReviewDto.builder().id(1).user(UserDto.builder().id(1).nickname("reviewUser1").build())
+                                .description("reviewDescription1").build()))
+                .build();
+
+        Mockito.when(movieService.findById(1)).thenReturn(expectedMovieDto);
+
+        mockMvc.perform(get("/api/v1/movie/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.nameUa").value("Втеча з Шоушенка"))
+                .andExpect(jsonPath("$.nameNative").value("The Shawshank Redemption"))
+                .andExpect(jsonPath("$.yearOfRelease").value(Year.of(1994).toString()))
+                .andExpect(jsonPath("$.description").value("testDescription1"))
+                .andExpect(jsonPath("$.rating").value("8.9"))
+                .andExpect(jsonPath("$.price").value("140.45"))
+                .andExpect(jsonPath("$.picturePath").value("picturePath1"))
+                .andExpect(jsonPath("$.countries.[0].id").value("1"))
+                .andExpect(jsonPath("$.countries.[0].name").value("США"))
+                .andExpect(jsonPath("$.genres.size()").value(2))
+                .andExpect(jsonPath("$.genres.[0].id").value("1"))
+                .andExpect(jsonPath("$.genres.[0].name").value("genre1"))
+                .andExpect(jsonPath("$.reviews.[0].id").value("1"))
+                .andExpect(jsonPath("$.reviews.[0].description").value("reviewDescription1"))
+                .andExpect(jsonPath("$.reviews.[0].user.id").value("1"))
+                .andExpect(jsonPath("$.reviews.[0].user.nickname").value("reviewUser1"));
+    }
+
+    @Test
+    public void testFindById_whenUserIsNotPresent() throws Exception {
+        Mockito.when(movieService.findById(2)).thenThrow(new MovieNotFoundException("No such movie found"));
+
+        mockMvc.perform(get("/api/v1/movie/2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("No such movie found"));
     }
 }
