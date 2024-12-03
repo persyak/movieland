@@ -2,6 +2,7 @@ package com.ohorodnik.movieland.service;
 
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 
@@ -27,4 +28,6 @@ public interface MovieService {
     List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
 
     MovieDetailsDto findById(Integer movieId);
+
+    MovieDetailsDto findById(Integer movieId, Currency currency);
 }

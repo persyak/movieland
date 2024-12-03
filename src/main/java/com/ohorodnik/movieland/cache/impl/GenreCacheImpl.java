@@ -21,6 +21,11 @@ public class GenreCacheImpl implements GenreCache {
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
 
+    @Override
+    public List<GenreDto> findAll() {
+        return genreMapper.toGenreDtoList(genres);
+    }
+
     @PostConstruct
     private void initCache() {
         genres = genreRepository.findAll();
@@ -29,10 +34,5 @@ public class GenreCacheImpl implements GenreCache {
     @Scheduled(initialDelayString = "${caching.spring.genreListTTL}", fixedRateString = "${caching.spring.genreListTTL}")
     private void updateCache() {
         genres = genreRepository.findAll();
-    }
-
-    @Override
-    public List<GenreDto> findAll() {
-        return genreMapper.toGenreDtoList(genres);
     }
 }

@@ -3,6 +3,7 @@ package com.ohorodnik.movieland.web.controller;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import lombok.Getter;
@@ -60,8 +61,8 @@ public class MovieController {
     }
 
     @GetMapping("/movie/{movieId}")
-    protected MovieDetailsDto findById(@PathVariable Integer movieId) {
-        return movieService.findById(movieId);
+    protected MovieDetailsDto findById(@PathVariable Integer movieId, Currency currency) {
+        return currency == null ? movieService.findById(movieId) : movieService.findById(movieId, currency);
     }
 
     @Getter

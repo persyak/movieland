@@ -7,6 +7,8 @@ import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
 import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.service.RatesService;
+import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class DefaultMovieService implements MovieService {
 
+    private final RatesService ratesService;
     private final MovieRepository movieRepository;
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
@@ -84,5 +87,26 @@ public class DefaultMovieService implements MovieService {
     public MovieDetailsDto findById(Integer movieId) {
         return movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
+    }
+
+    @Override
+    public MovieDetailsDto findById(Integer movieId, Currency currency) {
+        MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
+
+        Double rate = ratesService.getRate(currency);
+        double priceForeighCurrency = divide(movieDetailsDto.getPrice(), rate);
+
+        movieDetailsDto.setPrice(priceForeighCurrency);
+
+        return movieDetailsDto;
+    }
+
+    private Double divide(Double a, Double b) {
+        if (b == 0.0) {
+            throw new ArithmeticException("divide by zero is not allowed");
+        } else {
+            return a / b;
+        }
     }
 }
