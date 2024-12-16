@@ -14,7 +14,7 @@ public class ExchangeRateUrlBuilder implements UrlBuilder {
     private static final String EQUALSMARK = "=";
     private static final String ANDMARK = "&";
 
-
+    //TODO: think how to replace method to avoid unknown number of args
     @Override
     public String build(String... args) {
         StringBuilder requestStringBuilder = new StringBuilder(BASEURL);
@@ -29,7 +29,6 @@ public class ExchangeRateUrlBuilder implements UrlBuilder {
                 .append(args[1])
                 .append(ANDMARK)
                 .append(JSONSUFFIX);
-        String request = requestStringBuilder.toString();
-        return request;
+        return requestStringBuilder.toString();
     }
 }

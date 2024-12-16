@@ -19,12 +19,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
     private final MovieService movieService;
 
-    @GetMapping("/movies")
+    @GetMapping
     protected List<MovieDto> findAll(MovieSortingRequest movieSortingRequest) {
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
@@ -39,12 +39,12 @@ public class MovieController {
         return movieService.findAll(movieSortingRequest.getPriceSortingOrder());
     }
 
-    @GetMapping("/movies/random")
+    @GetMapping("/random")
     protected List<MovieDto> findRandomThree() {
         return movieService.findRandomThree();
     }
 
-    @GetMapping("/movies/genres/{genreId}")
+    @GetMapping("/genres/{genreId}")
     protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieSortingRequest movieSortingRequest) {
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {

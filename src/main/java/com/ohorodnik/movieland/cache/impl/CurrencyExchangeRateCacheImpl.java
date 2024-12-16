@@ -28,6 +28,7 @@ public class CurrencyExchangeRateCacheImpl implements CurrencyExchangeRateCache 
 
     @Override
     public RateDetailsDto getRate(Currency currency) {
+        //TODO: prepare some fallback or something to do when no rates are available
         if (rates.isEmpty() || !rates.get(Currency.USD).getExchangedate().equals(new SimpleDateFormat("dd.MM.yyyy").format(new Date()))) {
             rates = provideRates();
             if (rates.isEmpty() || !rates.get(Currency.USD).getExchangedate().equals(new SimpleDateFormat("dd.MM.yyyy").format(new Date()))) {

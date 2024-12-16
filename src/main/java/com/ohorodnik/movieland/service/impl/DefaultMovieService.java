@@ -103,6 +103,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     private Double divide(Double a, Double b) {
+        //TODO: round result to 2 signs after comma.
         if (b == 0.0) {
             throw new ArithmeticException("divide by zero is not allowed");
         } else {
