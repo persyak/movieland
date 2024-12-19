@@ -16,8 +16,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Year;
@@ -29,11 +30,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser
 public class MovieControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @MockitoBean
     private MovieService movieService;
 
     @BeforeEach
@@ -287,7 +289,7 @@ public class MovieControllerTest {
 
         Mockito.when(movieService.findById(1)).thenReturn(expectedMovieDto);
 
-        mockMvc.perform(get("/api/v1/movie/1")
+        mockMvc.perform(get("/api/v1/movies/movie/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
@@ -313,7 +315,7 @@ public class MovieControllerTest {
     public void testFindById_whenUserIsNotPresent() throws Exception {
         Mockito.when(movieService.findById(2)).thenThrow(new MovieNotFoundException("No such movie found"));
 
-        mockMvc.perform(get("/api/v1/movie/2")
+        mockMvc.perform(get("/api/v1/movies/movie/2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))

@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -39,9 +39,9 @@ public class DefaultMovieServiceTest {
     private DefaultMovieService defaultMovieService;
     @Autowired
     private MovieMapper movieMapper;
-    @MockBean
+    @MockitoBean
     private MovieRepository movieRepository;
-    @MockBean
+    @MockitoBean
     private MovieRepositoryCustom movieRepositoryCustom;
 
     @BeforeEach
