@@ -9,6 +9,7 @@ import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -26,6 +28,7 @@ public class MovieController {
 
     @GetMapping
     protected List<MovieDto> findAll(MovieSortingRequest movieSortingRequest) {
+        log.info("Query get all movies");
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
             return movieService.findAll();
@@ -41,11 +44,13 @@ public class MovieController {
 
     @GetMapping("/random")
     protected List<MovieDto> findRandomThree() {
+        log.info("Query get random three movies");
         return movieService.findRandomThree();
     }
 
     @GetMapping("/genres/{genreId}")
     protected List<MovieDto> findByGenreId(@PathVariable Integer genreId, MovieSortingRequest movieSortingRequest) {
+        log.info("Query get movies by genre id {}", genreId);
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
             return movieService.findByGenreId(genreId);
@@ -62,6 +67,7 @@ public class MovieController {
 
     @GetMapping("/movie/{movieId}")
     protected MovieDetailsDto findById(@PathVariable Integer movieId, Currency currency) {
+        log.info("Query movie details by movie id {}", movieId);
         return currency == null ? movieService.findById(movieId) : movieService.findById(movieId, currency);
     }
 

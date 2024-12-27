@@ -6,7 +6,7 @@
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+                %d{HH:mm:ss.SSS} [%t] %X{requestid} %X{login} %-5level %logger{36} - %msg%n
             </Pattern>
         </layout>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -19,7 +19,7 @@
         <file>${LOGS}/movieland.log</file>
         <encoder
                 class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>%d{HH:mm:ss.SSS} [%t] %X{requestid} %X{login} %-5level %logger{36} - %msg%n</Pattern>
         </encoder>
 
         <rollingPolicy

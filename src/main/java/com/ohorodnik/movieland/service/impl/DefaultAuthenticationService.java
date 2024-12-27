@@ -9,6 +9,7 @@ import com.ohorodnik.movieland.web.controller.request.LoginRequest;
 import com.ohorodnik.movieland.web.controller.response.AuthenticationResponse;
 import com.ohorodnik.movieland.web.controller.response.LogoutResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DefaultAuthenticationService implements AuthenticationService {
@@ -40,6 +42,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
         userRepository.save(user);
 
         UUID jwtToken = jwtUtils.generateToken(user);
+        log.info("User {} is authenticated successfully", user.getEmail());
         return AuthenticationResponse.builder().uuid(jwtToken).build();
     }
 
@@ -51,6 +54,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
             Authentication authenticate = authenticationManager.authenticate(token);
             User user = (User) authenticate.getPrincipal();
             UUID uuidToken = jwtUtils.generateToken(user);
+            log.info("Successful login for {}", user.getEmail());
             return AuthenticationResponse.builder().uuid(uuidToken).nickname(user.getNickname()).build();
         } catch (AuthenticationException e) {
             return AuthenticationResponse.builder().build();
@@ -61,6 +65,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
     public LogoutResponse logout(UUID uuid) {
         Optional<UUID> uuidOptional = jwtUtils.deleteToken(uuid);
         if (uuidOptional.isPresent()) {
+            log.info("User has been logged out");
             return LogoutResponse.builder().message("Logged out").build();
         }
         return LogoutResponse.builder().message("No session found").build();
