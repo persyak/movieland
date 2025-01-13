@@ -1,7 +1,8 @@
-package com.ohorodnik.movieland.service;
+package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.cache.GenreCache;
 import com.ohorodnik.movieland.dto.GenreDto;
+import com.ohorodnik.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

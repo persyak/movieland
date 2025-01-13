@@ -1,4 +1,4 @@
-package com.ohorodnik.movieland.service;
+package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
@@ -11,7 +11,6 @@ import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
-import com.ohorodnik.movieland.service.impl.DefaultMovieService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import org.junit.jupiter.api.BeforeEach;
