@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.mapper;
 
+import com.ohorodnik.movieland.dto.AddReviewDto;
 import com.ohorodnik.movieland.dto.ReviewDto;
 import com.ohorodnik.movieland.entity.Review;
 import org.mapstruct.Mapper;
@@ -12,4 +13,6 @@ public interface ReviewMapper {
     ReviewDto toReviewDto(Review review);
 
     List<ReviewDto> toReviewDtoList(List<Review> reviews);
+
+    Review toReview(AddReviewDto addReviewDto);
 }

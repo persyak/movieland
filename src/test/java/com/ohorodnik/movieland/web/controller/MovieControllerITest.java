@@ -27,8 +27,8 @@ public class MovieControllerITest extends BaseContainerImpl {
     private static final String MOVIE_COUNTRY_DATASET = "datasets/movie/movie-country-dataset.json";
     private static final String COUNTRY_DATASET = "datasets/movie/country-dataset.json";
     private static final String REVIEW_DATASET = "datasets/movie/review-dataset.json";
-    private static final String USER_DATASET = "datasets/movie/user-dataset.json";
-    private static final String RATING_DATASET = "datasets/movie/rating-dataset.json";
+    private static final String USER_DATASET = "datasets/user/user-dataset.json";
+    private static final String RATING_DATASET = "datasets/rating/rating-dataset.json";
 
     @Autowired
     private MockMvc mockMvc;

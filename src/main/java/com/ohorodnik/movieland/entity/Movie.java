@@ -68,4 +68,14 @@ public class Movie {
     @JoinColumn(name = "movie_id")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setMovie(this);
+    }
+
+    public void removeReview(Review review){
+        reviews.remove(review);
+        review.setMovie(null);
+    }
 }
