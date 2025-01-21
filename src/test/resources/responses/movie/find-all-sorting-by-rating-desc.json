@@ -1,0 +1,47 @@
+[
+  {
+    "id": 2,
+    "nameUa": "Зелена миля",
+    "nameNative": "The Green Mile",
+    "yearOfRelease": 1999,
+    "rating": 9.0,
+    "price": 134.67,
+    "picturePath": "picturePath2"
+  },
+  {
+    "id": 1,
+    "nameUa": "Втеча з Шоушенка",
+    "nameNative": "The Shawshank Redemption",
+    "yearOfRelease": 1994,
+    "rating": 8.9,
+    "price": 123.45,
+    "picturePath": "picturePath1"
+  },
+  {
+    "id": 4,
+    "nameUa": "Список Шиндлера",
+    "nameNative": "Schindler's List",
+    "yearOfRelease": 1993,
+    "rating": 8.7,
+    "price": 150.50,
+    "picturePath": "picturePath4"
+  },
+  {
+    "id": 3,
+    "nameUa": "Форест Гамп",
+    "nameNative": "Forrest Gump",
+    "yearOfRelease": 1994,
+    "rating": 8.6,
+    "price": 200.60,
+    "picturePath": "picturePath3"
+  },
+  {
+    "id": 5,
+    "nameUa": "1+1",
+    "nameNative": "Intouchables",
+    "yearOfRelease": 2011,
+    "rating": 8.3,
+    "price": 120.00,
+    "picturePath": "picturePath5"
+  }
+]

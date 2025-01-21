@@ -1,0 +1,40 @@
+{
+  "id": 1,
+  "nameUa": "Втеча з Шоушенка",
+  "nameNative": "The Shawshank Redemption",
+  "yearOfRelease": 1994,
+  "description": "testDescription1",
+  "rating": 8.9,
+  "price": 123.45,
+  "picturePath": "picturePath1",
+  "countries": [
+    {
+      "id": 1,
+      "name": "США"
+    }
+  ],
+  "genres": [
+    {
+      "id": 2,
+      "name": "genre2"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "user": {
+        "id": 3,
+        "nickname": "reviewUser3"
+      },
+      "description": "reviewDescription1"
+    },
+    {
+      "id": 2,
+      "user": {
+        "id": 1,
+        "nickname": "reviewUser1"
+      },
+      "description": "reviewDescription2"
+    }
+  ]
+}

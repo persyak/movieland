@@ -9,11 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Year;
-
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,15 +40,9 @@ public class MovieControllerITest extends BaseContainerImpl {
 
         mockMvc.perform(get("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].nameUa").value("Втеча з Шоушенка"))
-                .andExpect(jsonPath("$[0].nameNative").value("The Shawshank Redemption"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.9"))
-                .andExpect(jsonPath("$[0].price").value("123.45"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath1"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all.json")));
 
         assertSelectCount(1);
     }
@@ -64,13 +57,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("2"))
-                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
-                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
-                .andExpect(jsonPath("$[0].rating").value("9.0"))
-                .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all-sorting-by-rating-desc.json")));
 
         assertSelectCount(1);
     }
@@ -85,13 +73,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("5"))
-                .andExpect(jsonPath("$[0].nameUa").value("1+1"))
-                .andExpect(jsonPath("$[0].nameNative").value("Intouchables"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(2011).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.3"))
-                .andExpect(jsonPath("$[0].price").value("120.0"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath5"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all-sorting-by-price-asc.json")));
 
         assertSelectCount(1);
     }
@@ -106,13 +89,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("3"))
-                .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
-                .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.6"))
-                .andExpect(jsonPath("$[0].price").value("200.6"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all-sorting-by-price-desc.json")));
 
         assertSelectCount(1);
     }
@@ -127,13 +105,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("5"))
-                .andExpect(jsonPath("$[0].nameUa").value("1+1"))
-                .andExpect(jsonPath("$[0].nameNative").value("Intouchables"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(2011).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.3"))
-                .andExpect(jsonPath("$[0].price").value("120.0"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath5"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all-price-asc-rating-desc.json")));
 
         assertSelectCount(1);
     }
@@ -148,13 +121,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(5))
-                .andExpect(jsonPath("$[0].id").value("3"))
-                .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
-                .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.6"))
-                .andExpect(jsonPath("$[0].price").value("200.6"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-all-price-desc-rating-desc.json")));
 
         assertSelectCount(1);
     }
@@ -183,13 +151,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value("4"))
-                .andExpect(jsonPath("$[0].nameUa").value("Список Шиндлера"))
-                .andExpect(jsonPath("$[0].nameNative").value("Schindler's List"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1993).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.7"))
-                .andExpect(jsonPath("$[0].price").value("150.5"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath4"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-by-genre-id.json")));
 
         assertSelectCount(1);
     }
@@ -204,13 +167,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value("2"))
-                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
-                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
-                .andExpect(jsonPath("$[0].rating").value("9.0"))
-                .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-by-genre-id-sorting-rating-desc.json")));
 
         assertSelectCount(1);
     }
@@ -225,13 +183,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value("2"))
-                .andExpect(jsonPath("$[0].nameUa").value("Зелена миля"))
-                .andExpect(jsonPath("$[0].nameNative").value("The Green Mile"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1999).toString()))
-                .andExpect(jsonPath("$[0].rating").value("9.0"))
-                .andExpect(jsonPath("$[0].price").value("134.67"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath2"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-by-genre-id-sorting-price-asc.json")));
 
         assertSelectCount(1);
     }
@@ -246,13 +199,8 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value("3"))
-                .andExpect(jsonPath("$[0].nameUa").value("Форест Гамп"))
-                .andExpect(jsonPath("$[0].nameNative").value("Forrest Gump"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(Year.of(1994).toString()))
-                .andExpect(jsonPath("$[0].rating").value("8.6"))
-                .andExpect(jsonPath("$[0].price").value("200.6"))
-                .andExpect(jsonPath("$[0].picturePath").value("picturePath3"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-by-genre-id-sorting-price-desc.json")));
 
         assertSelectCount(1);
     }
@@ -328,24 +276,8 @@ public class MovieControllerITest extends BaseContainerImpl {
         mockMvc.perform(get("/api/v1/movies/movie/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.nameUa").value("Втеча з Шоушенка"))
-                .andExpect(jsonPath("$.nameNative").value("The Shawshank Redemption"))
-                .andExpect(jsonPath("$.yearOfRelease").value(Year.of(1994).toString()))
-                .andExpect(jsonPath("$.description").value("testDescription1"))
-                .andExpect(jsonPath("$.rating").value("8.9"))
-                .andExpect(jsonPath("$.price").value("123.45"))
-                .andExpect(jsonPath("$.picturePath").value("picturePath1"))
-                .andExpect(jsonPath("$.countries.[0].id").value("1"))
-                .andExpect(jsonPath("$.countries.[0].name").value("США"))
-                .andExpect(jsonPath("$.genres.size()").value(1))
-                .andExpect(jsonPath("$.genres.[0].id").value("2"))
-                .andExpect(jsonPath("$.genres.[0].name").value("genre2"))
-                .andExpect(jsonPath("$.reviews.size()").value(2))
-                .andExpect(jsonPath("$.reviews.[0].id").value("1"))
-                .andExpect(jsonPath("$.reviews.[0].description").value("reviewDescription1"))
-                .andExpect(jsonPath("$.reviews.[0].user.id").value("1"))
-                .andExpect(jsonPath("$.reviews.[0].user.nickname").value("reviewUser1"));
+                .andExpect(status().isOk()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/find-by-id.json")));
 
         assertSelectCount(6);
     }
