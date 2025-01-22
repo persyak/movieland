@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,7 +22,8 @@ import lombok.NoArgsConstructor;
 public class Genre {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genre_sequence_generator")
+    @SequenceGenerator(name = "genre_sequence_generator", sequenceName = "genre_id_seq", schema = "movieland", allocationSize = 1)
     private Integer id;
     @NotBlank(message = "Please add genre name")
     @Size(min = 3)

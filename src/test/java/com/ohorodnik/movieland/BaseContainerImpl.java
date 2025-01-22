@@ -1,8 +1,10 @@
 package com.ohorodnik.movieland;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
 import com.ohorodnik.movieland.utils.TestConfigurationToCountAllQueries;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -29,6 +31,8 @@ import static com.github.database.rider.core.api.configuration.Orthography.LOWER
 public class BaseContainerImpl {
 
     private static final PostgreSQLContainer<?> container;
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     static {
         container = new PostgreSQLContainer<>("postgres:latest")

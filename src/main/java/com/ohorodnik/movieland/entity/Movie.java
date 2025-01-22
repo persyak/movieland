@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -31,7 +32,8 @@ import java.util.List;
 public class Movie {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movie_sequence_generator")
+    @SequenceGenerator(name = "movie_sequence_generator", sequenceName = "movie_id_seq", schema = "movieland", allocationSize = 1)
     private Integer id;
     @NotBlank(message = "Please add movie UA name")
     @Size(min = 3)
@@ -74,7 +76,7 @@ public class Movie {
         review.setMovie(this);
     }
 
-    public void removeReview(Review review){
+    public void removeReview(Review review) {
         reviews.remove(review);
         review.setMovie(null);
     }

@@ -34,7 +34,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence_generator")
-    @SequenceGenerator(name = "user_sequence_generator", sequenceName = "user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_sequence_generator", sequenceName = "user_id_seq", schema = "movieland", allocationSize = 1)
     private Integer id;
     @NotBlank(message = "Please add nickName")
     @Size(min = 3)

@@ -29,7 +29,7 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_sequence_generator")
-    @SequenceGenerator(name = "review_sequence_generator", sequenceName = "review_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "review_sequence_generator", sequenceName = "review_id_seq", schema = "movieland", allocationSize = 1)
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY)
