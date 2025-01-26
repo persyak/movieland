@@ -43,7 +43,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
         UUID jwtToken = jwtUtils.generateToken(user);
         log.info("User {} is authenticated successfully", user.getEmail());
-        return AuthenticationResponse.builder().uuid(jwtToken).build();
+        return AuthenticationResponse.builder().uuid(jwtToken).nickname(user.getNickname()).build();
     }
 
     @Override

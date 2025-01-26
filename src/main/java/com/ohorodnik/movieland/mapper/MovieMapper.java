@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.mapper;
 
+import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
@@ -14,16 +15,24 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {GenreMapper.class, CountryMapper.class, ReviewMapper.class})
 public interface MovieMapper {
 
-    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapYearOfRelease")
+    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromLocalDateToYear")
     MovieDto toMovieDto(Movie movie);
 
     List<MovieDto> toMovieDtoList(List<Movie> movies);
 
-    @Named("mapYearOfRelease")
-    default Year mapYearOfRelease(LocalDate yearOfRelease) {
+    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromLocalDateToYear")
+    MovieDetailsDto toMovieDetailsDto(Movie movie);
+
+    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromIntegerToYear")
+    Movie toMovie(AddMovieDto addMovieDto);
+
+    @Named("mapFromLocalDateToYear")
+    default Year mapFromLocalDateToYear(LocalDate yearOfRelease) {
         return Year.from(yearOfRelease);
     }
 
-    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapYearOfRelease")
-    MovieDetailsDto toMovieDetailsDto(Movie movie);
+    @Named("mapFromIntegerToYear")
+    default LocalDate mapFromIntegerToYear(Integer yearOfRelease) {
+        return LocalDate.of(yearOfRelease, 1, 1);
+    }
 }

@@ -12,12 +12,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "movie", schema = "movieland")
 public class Movie {
@@ -44,12 +47,11 @@ public class Movie {
     @Builder.Default
     private LocalDate yearOfRelease = LocalDate.now();
     private String description;
-    @Positive(message = "Value should be above zero")
+    @NotNull
     private Double rating;
     @Positive(message = "Value should be above zero")
     private Double price;
     private String picturePath;
-    @Positive(message = "Value should be above zero")
     private int votes;
 
     @ManyToMany

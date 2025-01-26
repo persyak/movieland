@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.service;
 
+import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.utils.enums.Currency;
@@ -30,4 +31,6 @@ public interface MovieService {
     MovieDetailsDto findById(Integer movieId);
 
     MovieDetailsDto findById(Integer movieId, Currency currency);
+
+    MovieDetailsDto add(AddMovieDto addMovieDto);
 }

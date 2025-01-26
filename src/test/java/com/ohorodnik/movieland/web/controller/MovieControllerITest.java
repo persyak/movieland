@@ -2,6 +2,9 @@ package com.ohorodnik.movieland.web.controller;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
+import com.ohorodnik.movieland.dto.AddCountryDto;
+import com.ohorodnik.movieland.dto.AddGenreDto;
+import com.ohorodnik.movieland.dto.AddMovieDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,9 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +39,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     private MockMvc mockMvc;
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAll() throws Exception {
 
         reset();
@@ -48,7 +54,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByRatingDesc() throws Exception {
 
         reset();
@@ -64,7 +70,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceAsc() throws Exception {
 
         reset();
@@ -80,7 +86,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceDesc() throws Exception {
 
         reset();
@@ -96,7 +102,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceAscAndRatingDesc() throws Exception {
 
         reset();
@@ -112,7 +118,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindAllSortedByPriceDescAndRatingDesc() throws Exception {
 
         reset();
@@ -128,7 +134,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = MOVIES_DATASET, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testGetThreeRandomMovies() throws Exception {
 
         reset();
@@ -142,7 +148,8 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET},
+            cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindByGenreId() throws Exception {
 
         reset();
@@ -158,7 +165,8 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET},
+            cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindByGenreIdSortedByRatingDesc() throws Exception {
 
         reset();
@@ -174,7 +182,8 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET},
+            cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindByGenreIdSortedByPriceAsc() throws Exception {
 
         reset();
@@ -190,7 +199,8 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET}, skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET},
+            cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     public void testFindByGenreIdSortedByPriceDesc() throws Exception {
 
         reset();
@@ -268,6 +278,7 @@ public class MovieControllerITest extends BaseContainerImpl {
     @Test
     @DataSet(value = {MOVIES_DATASET, MOVIE_GENRE_DATASET, GENRE_DATASET,
             MOVIE_COUNTRY_DATASET, COUNTRY_DATASET, REVIEW_DATASET, USER_DATASET, RATING_DATASET},
+            cleanBefore = true,
             skipCleaningFor = "flyway_schema_history")
     public void testFindById() throws Exception {
 
@@ -280,5 +291,34 @@ public class MovieControllerITest extends BaseContainerImpl {
                         .json(getResponseAsString("responses/movie/find-by-id.json")));
 
         assertSelectCount(6);
+    }
+
+    @Test
+    @DataSet(value = {GENRE_DATASET, COUNTRY_DATASET}, cleanBefore = true,
+            skipCleaningFor = "flyway_schema_history")
+    @WithMockUser(authorities = "A")
+    public void testAdd() throws Exception {
+
+        mockMvc.perform(post("/api/v1/movies/movie")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddMovieDto())))
+                .andExpect(status().isCreated()).andExpect(content()
+                        .json(getResponseAsString("responses/movie/add-movie.json")));
+
+    }
+
+    private AddMovieDto createAddMovieDto() {
+        return AddMovieDto.builder()
+                .nameUa("Втеча з Шоушенка")
+                .nameNative("The Shawshank Redemption")
+                .yearOfRelease(1994)
+                .description("testDescription1")
+                .price(140.45)
+                .picturePath("https://testpicturepath")
+                .countries(List.of(AddCountryDto.builder().id(1).name("США").build(),
+                        AddCountryDto.builder().id(2).name("Франція").build()))
+                .genres(List.of(AddGenreDto.builder().id(1).name("genre1").build(),
+                        AddGenreDto.builder().id(2).name("genre2").build()))
+                .build();
     }
 }

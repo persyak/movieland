@@ -1,7 +1,9 @@
 package com.ohorodnik.movieland.service.impl;
 
+import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
@@ -20,7 +22,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DefaultMovieService implements MovieService {
 
     private final RatesService ratesService;
@@ -29,11 +30,13 @@ public class DefaultMovieService implements MovieService {
     private final MovieMapper movieMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findAll() {
         return movieMapper.toMovieDtoList(movieRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findAll(RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(
                 movieRepository.findAll(
@@ -41,6 +44,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findAll(PriceSortingOrder priceSortingOrder) {
         return movieMapper.toMovieDtoList(
                 movieRepository.findAll(
@@ -48,40 +52,47 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findAllCustomPriceAndRatingSorting(PriceSortingOrder priceSortingOrder) {
         return movieMapper.toMovieDtoList(
                 movieRepositoryCustom.findAndSortByPriceAndRating(priceSortingOrder.toString()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findRandomThree() {
         return movieMapper.toMovieDtoList(movieRepository.findRandomThree());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findByGenreId(Integer genreId) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(genreId));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findByGenreId(Integer genreId, RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
                 genreId, Sort.by(Sort.Direction.fromString(ratingSortingOrder.toString()), "rating")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepository.findByGenres_Id(
                 genreId, Sort.by(Sort.Direction.fromString(priceSortingOrder.toString()), "price")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder) {
         return movieMapper.toMovieDtoList(movieRepositoryCustom.findByGenreIdAndSortByPriceAndRating(
                 genreId, priceSortingOrder.toString()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     //TODO: after we get reviews, it iterates over them and queries DB for user for each review separately.
     //TODO: define if it's possible to querie users in one select.
     public MovieDetailsDto findById(Integer movieId) {
@@ -90,6 +101,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MovieDetailsDto findById(Integer movieId, Currency currency) {
         MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
@@ -100,6 +112,14 @@ public class DefaultMovieService implements MovieService {
         movieDetailsDto.setPrice(priceForeighCurrency);
 
         return movieDetailsDto;
+    }
+
+    @Override
+    @Transactional
+    public MovieDetailsDto add(AddMovieDto addMovieDto) {
+        Movie movie = movieMapper.toMovie(addMovieDto);
+        movie.setRating((double) 0);
+        return movieMapper.toMovieDetailsDto(movieRepository.save(movie));
     }
 
     private Double divide(Double a, Double b) {

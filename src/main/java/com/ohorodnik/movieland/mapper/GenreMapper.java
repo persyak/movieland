@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.mapper;
 
+import com.ohorodnik.movieland.dto.AddGenreDto;
 import com.ohorodnik.movieland.dto.GenreDto;
 import com.ohorodnik.movieland.entity.Genre;
 import org.mapstruct.Mapper;
@@ -12,4 +13,8 @@ public interface GenreMapper {
     GenreDto toGenreDto(Genre genre);
 
     List<GenreDto> toGenreDtoList(List<Genre> genres);
+
+    Genre toGenre(AddGenreDto addGenreDto);
+
+    List<Genre> toGenreList(List<AddGenreDto> genres);
 }
