@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertInsertCount;
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
+import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,11 +36,16 @@ public class ReviewControllerITest extends BaseContainerImpl {
     @ExpectedDataSet(value = {USER_DATASET, MOVIE_DATASET, ADDED_REVIEW_DATASET})
     public void whenUserExistsAndMovieExistsAndReviewIsNotAdded_thenAddReview() throws Exception {
 
+        reset();
+
         mockMvc.perform(post("/api/v1/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddReviewDto())))
                 .andExpect(status().isOk()).andExpect(content()
                         .json(getResponseAsString("responses/review/added-review.json")));
+
+        assertSelectCount(4);
+        assertInsertCount(1);
     }
 
     @Test
@@ -46,11 +54,15 @@ public class ReviewControllerITest extends BaseContainerImpl {
     @ExpectedDataSet(value = {USER_DATASET, MOVIE_DATASET})
     public void ifReviewExists_thenThrowReviewExistsException() throws Exception {
 
+        reset();
+
         mockMvc.perform(post("/api/v1/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddReviewDto())))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message").value("User reviewUser1 added review for movie 1 already"));
+
+        assertSelectCount(2);
     }
 
     @Test
@@ -58,11 +70,15 @@ public class ReviewControllerITest extends BaseContainerImpl {
     @DataSet(value = {USER_DATASET, MOVIE_WITHOUT_REQUIRED_DATASET}, cleanAfter = true, skipCleaningFor = "flyway_schema_history")
     public void ifMovieDoesNotExist_thenThrowMovieNotFoundException() throws Exception {
 
+        reset();
+
         mockMvc.perform(post("/api/v1/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddReviewDto())))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("No such movie found"));
+
+        assertSelectCount(3);
     }
 
     private AddReviewDto createAddReviewDto() {

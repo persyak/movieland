@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertInsertCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -299,11 +300,16 @@ public class MovieControllerITest extends BaseContainerImpl {
     @WithMockUser(authorities = "A")
     public void testAdd() throws Exception {
 
+        reset();
+
         mockMvc.perform(post("/api/v1/movies/movie")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddMovieDto())))
                 .andExpect(status().isCreated()).andExpect(content()
                         .json(getResponseAsString("responses/movie/add-movie.json")));
+
+        assertSelectCount(1);
+        assertInsertCount(5);
 
     }
 
