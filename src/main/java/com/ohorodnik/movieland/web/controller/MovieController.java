@@ -1,6 +1,7 @@
 package com.ohorodnik.movieland.web.controller;
 
 import com.ohorodnik.movieland.dto.AddMovieDto;
+import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.service.MovieService;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -72,18 +74,25 @@ public class MovieController {
         return movieService.findByGenreId(genreId, movieSortingRequest.getPriceSortingOrder());
     }
 
-    @GetMapping("/movie/{movieId}")
-    protected MovieDetailsDto findById(@PathVariable Integer movieId, Currency currency) {
-        log.info("Query movie details by movie id {}", movieId);
-        return currency == null ? movieService.findById(movieId) : movieService.findById(movieId, currency);
+    @GetMapping("/movie/{id}")
+    protected MovieDetailsDto findById(@PathVariable Integer id, Currency currency) {
+        log.info("Query movie details by movie id {}", id);
+        return currency == null ? movieService.findById(id) : movieService.findById(id, currency);
     }
 
     @PostMapping("/movie")
     @PreAuthorize("hasAuthority('A')")
     @ResponseStatus(HttpStatus.CREATED)
     protected MovieDetailsDto add(@Valid @RequestBody AddMovieDto addMovieDto) {
-
         return movieService.add(addMovieDto);
+    }
+
+    @PutMapping("/movie/{id}")
+    @PreAuthorize("hasAuthority('A')")
+    protected MovieDetailsDto edit(@PathVariable Integer id, @Valid @RequestBody EditMovieDto editMovieDto) {
+        MovieDetailsDto movieDetailsDto = movieService.edit(id, editMovieDto);
+        log.info("Movie {} has been updated", id);
+        return movieDetailsDto;
     }
 
     @Getter

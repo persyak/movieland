@@ -1,0 +1,31 @@
+{
+  "id": 1,
+  "nameUa": "Нова Втеча з Шоушенка",
+  "nameNative": "The New Shawshank Redemption",
+  "yearOfRelease": 1994,
+  "description": "testDescription1",
+  "rating": 0.0,
+  "price": 140.45,
+  "picturePath": "https://testpicturepathNew",
+  "countries": [
+    {
+      "id": 3,
+      "name": "Великобританія"
+    },
+    {
+      "id": 4,
+      "name": "Італія"
+    }
+  ],
+  "genres": [
+    {
+      "id": 3,
+      "name": "genre3"
+    },
+    {
+      "id": 4,
+      "name": "genre4"
+    }
+  ],
+  "reviews": []
+}

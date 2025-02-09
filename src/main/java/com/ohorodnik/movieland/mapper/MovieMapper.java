@@ -1,11 +1,13 @@
 package com.ohorodnik.movieland.mapper;
 
 import com.ohorodnik.movieland.dto.AddMovieDto;
+import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.time.LocalDate;
@@ -25,6 +27,9 @@ public interface MovieMapper {
 
     @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromIntegerToYear")
     Movie toMovie(AddMovieDto addMovieDto);
+
+    @Mapping(target = "id", ignore = true)
+    Movie update(@MappingTarget Movie movie, EditMovieDto editMovieDto);
 
     @Named("mapFromLocalDateToYear")
     default Year mapFromLocalDateToYear(LocalDate yearOfRelease) {

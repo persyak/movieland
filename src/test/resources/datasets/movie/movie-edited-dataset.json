@@ -1,0 +1,15 @@
+{
+  "movie": [
+    {
+      "id": 1,
+      "name_ua": "Нова Втеча з Шоушенка",
+      "name_native": "The New Shawshank Redemption",
+      "year_of_release": "1994-01-01",
+      "description": "testDescription1",
+      "rating": 0.0,
+      "price": 140.45,
+      "picture_path": "https://testpicturepathNew",
+      "votes": 100
+    }
+  ]
+}

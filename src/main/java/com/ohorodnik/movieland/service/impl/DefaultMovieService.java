@@ -1,6 +1,7 @@
 package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.dto.AddMovieDto;
+import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
@@ -120,6 +121,14 @@ public class DefaultMovieService implements MovieService {
         Movie movie = movieMapper.toMovie(addMovieDto);
         movie.setRating((double) 0);
         return movieMapper.toMovieDetailsDto(movieRepository.save(movie));
+    }
+
+    @Override
+    @Transactional
+    public MovieDetailsDto edit(Integer id, EditMovieDto editMovieDto) {
+        Movie movie = movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException("No such movie found"));
+        Movie updatedMovie = movieMapper.update(movie, editMovieDto);
+        return movieMapper.toMovieDetailsDto(updatedMovie);
     }
 
     private Double divide(Double a, Double b) {

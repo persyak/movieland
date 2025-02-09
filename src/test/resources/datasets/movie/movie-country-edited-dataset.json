@@ -1,0 +1,12 @@
+{
+  "movie_country": [
+    {
+      "movie_id": 1,
+      "country_id": 3
+    },
+    {
+      "movie_id": 1,
+      "country_id": 4
+    }
+  ]
+}

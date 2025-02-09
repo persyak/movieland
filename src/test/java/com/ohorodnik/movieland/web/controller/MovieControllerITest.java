@@ -1,10 +1,14 @@
 package com.ohorodnik.movieland.web.controller;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
 import com.ohorodnik.movieland.dto.AddCountryDto;
 import com.ohorodnik.movieland.dto.AddGenreDto;
 import com.ohorodnik.movieland.dto.AddMovieDto;
+import com.ohorodnik.movieland.dto.EditCountryDto;
+import com.ohorodnik.movieland.dto.EditGenreDto;
+import com.ohorodnik.movieland.dto.EditMovieDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,9 +20,11 @@ import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertInsertCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertUpdateCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,9 +34,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MovieControllerITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movie-dataset.json";
+    private static final String MOVIE_ADDED_DATASET = "datasets/movie/movie-added-dataset.json";
     private static final String MOVIE_GENRE_DATASET = "datasets/movie/movie-genre-dataset.json";
+    private static final String MOVIE_GENRE_TO_EDIT_DATASET = "datasets/movie/movie-genre-to-edit-dataset.json";
+    private static final String MOVIE_GENRE_ADDED_DATASET = "datasets/movie/movie-genre-added-dataset.json";
+    private static final String MOVIE_GENRE_EDITED_DATASET = "datasets/movie/movie-genre-edited-dataset.json";
+    private static final String MOVIE_TO_EDIT_DATASET = "datasets/movie/movie-to-edit-dataset.json";
+    private static final String MOVIE_EDITED_DATASET = "datasets/movie/movie-edited-dataset.json";
     private static final String GENRE_DATASET = "datasets/genre/genre-dataset.json";
     private static final String MOVIE_COUNTRY_DATASET = "datasets/movie/movie-country-dataset.json";
+    private static final String MOVIE_COUNTRY_ADDED_DATASET = "datasets/movie/movie-country-added-dataset.json";
+    private static final String MOVIE_COUNTRY_TO_EDIT_DATASET = "datasets/movie/movie-country-to-edit-dataset.json";
+    private static final String MOVIE_COUNTRY_EDITED_DATASET = "datasets/movie/movie-country-edited-dataset.json";
     private static final String COUNTRY_DATASET = "datasets/country/country-dataset.json";
     private static final String REVIEW_DATASET = "datasets/review/review-dataset.json";
     private static final String USER_DATASET = "datasets/user/user-dataset.json";
@@ -287,7 +302,6 @@ public class MovieControllerITest extends BaseContainerImpl {
 
         mockMvc.perform(get("/api/v1/movies/movie/1")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
                 .andExpect(status().isOk()).andExpect(content()
                         .json(getResponseAsString("responses/movie/find-by-id.json")));
 
@@ -295,8 +309,9 @@ public class MovieControllerITest extends BaseContainerImpl {
     }
 
     @Test
-    @DataSet(value = {GENRE_DATASET, COUNTRY_DATASET}, cleanBefore = true,
-            skipCleaningFor = "flyway_schema_history")
+    @DataSet(value = {GENRE_DATASET, COUNTRY_DATASET}, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = {GENRE_DATASET, COUNTRY_DATASET, MOVIE_ADDED_DATASET, MOVIE_COUNTRY_ADDED_DATASET,
+            MOVIE_GENRE_ADDED_DATASET})
     @WithMockUser(authorities = "A")
     public void testAdd() throws Exception {
 
@@ -313,6 +328,46 @@ public class MovieControllerITest extends BaseContainerImpl {
 
     }
 
+    @Test
+    @DataSet(value = {GENRE_DATASET, COUNTRY_DATASET, MOVIE_TO_EDIT_DATASET, MOVIE_COUNTRY_TO_EDIT_DATASET,
+            MOVIE_GENRE_TO_EDIT_DATASET}, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = {GENRE_DATASET, COUNTRY_DATASET, MOVIE_EDITED_DATASET, MOVIE_COUNTRY_EDITED_DATASET,
+            MOVIE_GENRE_EDITED_DATASET})
+    @WithMockUser(authorities = "A")
+    public void whenMovieIsAvailable_thenEditMovie() throws Exception {
+
+        reset();
+
+        mockMvc.perform(put("/api/v1/movies/movie/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createEditMovieDto())))
+                .andExpect(status().isOk())
+                .andExpect(content().json(getResponseAsString("responses/movie/edit-movie.json")));
+
+        assertSelectCount(4);
+        assertInsertCount(4);
+        assertUpdateCount(1);
+    }
+
+    @Test
+    @DataSet(value = {GENRE_DATASET, COUNTRY_DATASET, MOVIE_TO_EDIT_DATASET, MOVIE_COUNTRY_TO_EDIT_DATASET,
+            MOVIE_GENRE_TO_EDIT_DATASET}, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = {GENRE_DATASET, COUNTRY_DATASET, MOVIE_TO_EDIT_DATASET, MOVIE_COUNTRY_TO_EDIT_DATASET,
+            MOVIE_GENRE_TO_EDIT_DATASET})
+    @WithMockUser(authorities = "A")
+    public void whenMovieIsNotAvailable_thenThrowMovieNotFoundExceptionWhenEditMovie() throws Exception {
+
+        reset();
+
+        mockMvc.perform(put("/api/v1/movies/movie/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createEditMovieDto())))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("No such movie found"));
+
+        assertSelectCount(1);
+    }
+
     private AddMovieDto createAddMovieDto() {
         return AddMovieDto.builder()
                 .nameUa("Втеча з Шоушенка")
@@ -325,6 +380,18 @@ public class MovieControllerITest extends BaseContainerImpl {
                         AddCountryDto.builder().id(2).name("Франція").build()))
                 .genres(List.of(AddGenreDto.builder().id(1).name("genre1").build(),
                         AddGenreDto.builder().id(2).name("genre2").build()))
+                .build();
+    }
+
+    private EditMovieDto createEditMovieDto() {
+        return EditMovieDto.builder()
+                .nameUa("Нова Втеча з Шоушенка")
+                .nameNative("The New Shawshank Redemption")
+                .picturePath("https://testpicturepathNew")
+                .countries(List.of(EditCountryDto.builder().id(3).name("Великобританія").build(),
+                        EditCountryDto.builder().id(4).name("Італія").build()))
+                .genres(List.of(EditGenreDto.builder().id(3).name("genre3").build(),
+                        EditGenreDto.builder().id(4).name("genre4").build()))
                 .build();
     }
 }

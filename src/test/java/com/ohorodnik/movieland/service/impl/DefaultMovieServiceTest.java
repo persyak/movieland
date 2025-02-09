@@ -4,6 +4,9 @@ import com.ohorodnik.movieland.dto.AddCountryDto;
 import com.ohorodnik.movieland.dto.AddGenreDto;
 import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.CountryDto;
+import com.ohorodnik.movieland.dto.EditCountryDto;
+import com.ohorodnik.movieland.dto.EditGenreDto;
+import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.GenreDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
@@ -23,7 +26,6 @@ import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
@@ -521,5 +523,102 @@ public class DefaultMovieServiceTest {
         assertEquals(2, movieDetailsDtoActual.getGenres().size());
         assertEquals(1, movieDetailsDtoActual.getGenres().getFirst().getId());
         assertEquals("драма", movieDetailsDtoActual.getGenres().getFirst().getName());
+    }
+
+    @Test
+    public void whenMovieIsAvailable_thenEditMovie() {
+
+        Movie movieForUpdate = Movie.builder()
+                .id(1)
+                .nameUa("Втеча з Шоушенка")
+                .nameNative("The Shawshank Redemption")
+                .yearOfRelease(LocalDate.of(1994, 1, 1))
+                .description("testDescription1")
+                .rating(0.0)
+                .price(140.45)
+                .picturePath("https://testpicturepath")
+                .countries(List.of(Country.builder().id(1).name("США").build(),
+                        Country.builder().id(2).name("Франція").build()))
+                .genres(List.of(Genre.builder().id(1).name("драма").build(),
+                        Genre.builder().id(2).name("пригоди").build()))
+                .build();
+
+        Movie updatedMovie = Movie.builder()
+                .id(1)
+                .nameUa("Нова Втеча з Шоушенка")
+                .nameNative("The New Shawshank Redemption")
+                .yearOfRelease(LocalDate.of(1994, 1, 1))
+                .description("testDescription1")
+                .rating(0.0)
+                .price(140.45)
+                .picturePath("https://testpicturepathNew")
+                .countries(List.of(Country.builder().id(3).name("Великобританія").build(),
+                        Country.builder().id(4).name("Італія").build()))
+                .genres(List.of(Genre.builder().id(3).name("фентезі").build(),
+                        Genre.builder().id(4).name("детектив").build()))
+                .build();
+
+        EditMovieDto editMovieDto = EditMovieDto.builder()
+                .nameUa("Нова Втеча з Шоушенка")
+                .nameNative("The New Shawshank Redemption")
+                .picturePath("https://testpicturepathNew")
+                .countries(List.of(EditCountryDto.builder().id(3).name("Великобританія").build(),
+                        EditCountryDto.builder().id(4).name("Італія").build()))
+                .genres(List.of(EditGenreDto.builder().id(3).name("фентезі").build(),
+                        EditGenreDto.builder().id(4).name("детектив").build()))
+                .build();
+
+        MovieDetailsDto movieDetailsDtoExpected = MovieDetailsDto.builder()
+                .id(1)
+                .nameUa("Нова Втеча з Шоушенка")
+                .nameNative("The New Shawshank Redemption")
+                .yearOfRelease(Year.of(1994))
+                .description("testDescription1")
+                .rating(0.0)
+                .price(140.45)
+                .picturePath("https://testpicturepathNew")
+                .countries(List.of(CountryDto.builder().id(3).name("Великобританія").build(),
+                        CountryDto.builder().id(4).name("Італія").build()))
+                .genres(List.of(GenreDto.builder().id(3).name("фентезі").build(),
+                        GenreDto.builder().id(4).name("детектив").build()))
+                .build();
+
+        when(movieRepository.findById(1)).thenReturn(Optional.of(movieForUpdate));
+        when(movieMapper.update(movieForUpdate, editMovieDto)).thenReturn(updatedMovie);
+        when(movieMapper.toMovieDetailsDto(updatedMovie)).thenReturn(movieDetailsDtoExpected);
+
+        MovieDetailsDto actual = defaultMovieService.edit(1, editMovieDto);
+
+        assertEquals(1, actual.getId());
+        assertEquals("Нова Втеча з Шоушенка", actual.getNameUa());
+        assertEquals("The New Shawshank Redemption", actual.getNameNative());
+        assertEquals("https://testpicturepathNew", actual.getPicturePath());
+        assertEquals(2, actual.getCountries().size());
+        assertEquals(3, actual.getCountries().getFirst().getId());
+        assertEquals("Великобританія", actual.getCountries().getFirst().getName());
+        assertEquals(2, actual.getGenres().size());
+        assertEquals(3, actual.getGenres().getFirst().getId());
+        assertEquals("фентезі", actual.getGenres().getFirst().getName());
+    }
+
+    @Test
+    public void whenMovieIsNotAvailable_thenThrowMovieNotFoundExceptionWhenEditMovie() {
+
+        EditMovieDto editMovieDto = EditMovieDto.builder()
+                .nameUa("Нова Втеча з Шоушенка")
+                .nameNative("The New Shawshank Redemption")
+                .picturePath("https://testpicturepathNew")
+                .countries(List.of(EditCountryDto.builder().id(3).name("Великобританія").build(),
+                        EditCountryDto.builder().id(4).name("Італія").build()))
+                .genres(List.of(EditGenreDto.builder().id(3).name("фентезі").build(),
+                        EditGenreDto.builder().id(4).name("детектив").build()))
+                .build();
+
+        when(movieRepository.findById(2)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(MovieNotFoundException.class, () -> {
+            defaultMovieService.edit(2, editMovieDto);
+        });
+        assertTrue(exception.getMessage().contains("No such movie found"));
     }
 }
