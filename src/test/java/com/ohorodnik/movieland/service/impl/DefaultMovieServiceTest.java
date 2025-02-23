@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -374,7 +375,7 @@ public class DefaultMovieServiceTest {
     }
 
     @Test
-    public void testFindById_whenUserIsAvailable() {
+    public void testFindById_whenUserIsAvailable() throws ExecutionException, InterruptedException {
         Movie expectedMovie = Movie.builder()
                 .id(1)
                 .nameUa("Втеча з Шоушенка")

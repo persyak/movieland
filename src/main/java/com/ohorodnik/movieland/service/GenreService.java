@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface GenreService {
     List<GenreDto> findAll();
+
+    List<GenreDto> findByGenreIdList(List<Integer> ids);
 }

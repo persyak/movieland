@@ -5,6 +5,7 @@ import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
+import com.ohorodnik.movieland.entity.custom.MovieCustom;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -24,6 +25,9 @@ public interface MovieMapper {
 
     @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromLocalDateToYear")
     MovieDetailsDto toMovieDetailsDto(Movie movie);
+
+    @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromLocalDateToYear")
+    MovieDetailsDto toMovieDetailsDto(MovieCustom movieCustom);
 
     @Mapping(target = "yearOfRelease", source = "yearOfRelease", qualifiedByName = "mapFromIntegerToYear")
     Movie toMovie(AddMovieDto addMovieDto);

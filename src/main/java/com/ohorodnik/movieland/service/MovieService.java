@@ -9,6 +9,7 @@ import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface MovieService {
     List<MovieDto> findAll();
@@ -29,7 +30,7 @@ public interface MovieService {
 
     List<MovieDto> findByGenreId(Integer genreId, PriceSortingOrder priceSortingOrder, RatingSortingOrder ratingSortingOrder);
 
-    MovieDetailsDto findById(Integer movieId);
+    MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException;
 
     MovieDetailsDto findById(Integer movieId, Currency currency);
 
