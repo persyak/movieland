@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -75,7 +76,7 @@ public class MovieController {
     }
 
     @GetMapping("/movie/{id}")
-    protected MovieDetailsDto findById(@PathVariable Integer id, Currency currency) {
+    protected MovieDetailsDto findById(@PathVariable Integer id, Currency currency) throws ExecutionException, InterruptedException {
         log.info("Query movie details by movie id {}", id);
         return currency == null ? movieService.findById(id) : movieService.findById(id, currency);
     }

@@ -2,9 +2,9 @@ package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.entity.User;
 import com.ohorodnik.movieland.repository.UserRepository;
+import com.ohorodnik.movieland.service.UserDetailsServiceExtention;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsServiceExtention {
 
     private final UserRepository userRepository;
 
@@ -24,5 +24,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User does not exist");
         }
         return userOptional.get();
+    }
+
+    public UserDetails findUserById(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.orElseThrow(() -> new UsernameNotFoundException("User does not exist"));
     }
 }

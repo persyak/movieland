@@ -2,6 +2,7 @@ package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.cache.GenreCache;
 import com.ohorodnik.movieland.dto.GenreDto;
+import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,17 +25,17 @@ public class DefaultGenreServiceTest {
 
     @BeforeEach
     public void setup() {
-        GenreDto firstGenreDto = GenreDto.builder()
+        Genre firstGenre = Genre.builder()
                 .id(1)
                 .name("testGenre1")
                 .build();
 
-        GenreDto secondGenreDto = GenreDto.builder()
+        Genre secondGenre = Genre.builder()
                 .id(2)
                 .name("testGenre2")
                 .build();
 
-        Mockito.when(genreCache.findAll()).thenReturn(List.of(firstGenreDto, secondGenreDto));
+        Mockito.when(genreCache.findAll()).thenReturn(List.of(firstGenre, secondGenre));
     }
 
     @Test
