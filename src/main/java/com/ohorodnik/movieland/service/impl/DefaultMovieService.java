@@ -24,6 +24,9 @@ import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +52,8 @@ public class DefaultMovieService<V> implements MovieService {
     private final MovieRepoCustom movieRepoCustom;
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
+
+    private final CacheManager cacheManager;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -115,6 +120,7 @@ public class DefaultMovieService<V> implements MovieService {
     }
 
     @Override
+    @Cacheable("MovieDetailsDtoCache")
     @Transactional(readOnly = true)
     public MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException {
 
@@ -190,7 +196,14 @@ public class DefaultMovieService<V> implements MovieService {
     public MovieDetailsDto edit(Integer id, EditMovieDto editMovieDto) {
         Movie movie = movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException("No such movie found"));
         Movie updatedMovie = movieMapper.update(movie, editMovieDto);
-        return movieMapper.toMovieDetailsDto(updatedMovie);
+
+        MovieDetailsDto updatedMovieDetailsDto = movieMapper.toMovieDetailsDto(updatedMovie);
+
+        Cache cache = cacheManager.getCache("MovieDetailsDtoCache");
+        if (cache.evictIfPresent(id)){
+            cache.put(id, updatedMovieDetailsDto);
+        }
+        return updatedMovieDetailsDto;
     }
 
     private Double divide(Double a, Double b) {

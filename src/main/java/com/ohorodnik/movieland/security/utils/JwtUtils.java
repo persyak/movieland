@@ -24,7 +24,7 @@ public class JwtUtils {
 
     Cache<UUID, String> cache = Caffeine.newBuilder()
             .expireAfterWrite(120, TimeUnit.MINUTES)
-            .maximumSize(100)
+            .initialCapacity(10)
             .build();
 
     public String extractUsername(UUID uuid) {
