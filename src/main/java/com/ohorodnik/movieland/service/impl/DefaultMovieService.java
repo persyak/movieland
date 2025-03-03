@@ -1,5 +1,6 @@
 package com.ohorodnik.movieland.service.impl;
 
+import com.ohorodnik.movieland.cache.MovieCache;
 import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.CountryDto;
 import com.ohorodnik.movieland.dto.EditMovieDto;
@@ -24,9 +25,7 @@ import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class DefaultMovieService<V> implements MovieService {
+public class DefaultMovieService implements MovieService {
 
     private final RatesService ratesService;
     private final CountryService countryService;
@@ -52,8 +52,7 @@ public class DefaultMovieService<V> implements MovieService {
     private final MovieRepoCustom movieRepoCustom;
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
-
-    private final CacheManager cacheManager;
+    private final MovieCache movieCache;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -120,9 +119,12 @@ public class DefaultMovieService<V> implements MovieService {
     }
 
     @Override
-    @Cacheable("MovieDetailsDtoCache")
     @Transactional(readOnly = true)
     public MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException {
+
+        if (movieCache.contains(movieId)) {
+            return movieCache.get(movieId);
+        }
 
         MovieCustom movieCustom = movieRepoCustom.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("No such movie found"));
@@ -163,6 +165,13 @@ public class DefaultMovieService<V> implements MovieService {
             reviewFuture.cancel(true);
         }
 
+        MovieDetailsDto movieDetailsDtoCached = movieCache.put(movieId, movieDetailsDto);
+        if (movieDetailsDtoCached != null) {
+            log.error(
+                    "Movie {} should be retrieved from cache, however it was retrieved from repository and cache was overwritten",
+                    movieId);
+        }
+
         return movieDetailsDto;
 
 //        return movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
@@ -171,9 +180,8 @@ public class DefaultMovieService<V> implements MovieService {
 
     @Override
     @Transactional(readOnly = true)
-    public MovieDetailsDto findById(Integer movieId, Currency currency) {
-        MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
-                .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
+    public MovieDetailsDto findById(Integer movieId, Currency currency) throws ExecutionException, InterruptedException {
+        MovieDetailsDto movieDetailsDto = findById(movieId);
 
         Double rate = ratesService.getRate(currency);
         double priceForeighCurrency = divide(movieDetailsDto.getPrice(), rate);
@@ -193,17 +201,18 @@ public class DefaultMovieService<V> implements MovieService {
 
     @Override
     @Transactional
-    public MovieDetailsDto edit(Integer id, EditMovieDto editMovieDto) {
-        Movie movie = movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException("No such movie found"));
+    public MovieDetailsDto edit(Integer movieId, EditMovieDto editMovieDto) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("No such movie found"));
         Movie updatedMovie = movieMapper.update(movie, editMovieDto);
 
-        MovieDetailsDto updatedMovieDetailsDto = movieMapper.toMovieDetailsDto(updatedMovie);
+        MovieDetailsDto movieDetailsDtoUpdated = movieMapper.toMovieDetailsDto(updatedMovie);
 
-        Cache cache = cacheManager.getCache("MovieDetailsDtoCache");
-        if (cache.evictIfPresent(id)){
-            cache.put(id, updatedMovieDetailsDto);
+        if (movieCache.contains(movieId)){
+            movieCache.remove(movieId);
+            movieCache.put(movieId, movieDetailsDtoUpdated);
         }
-        return updatedMovieDetailsDto;
+
+        return movieDetailsDtoUpdated;
     }
 
     private Double divide(Double a, Double b) {

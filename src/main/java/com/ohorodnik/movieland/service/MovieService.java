@@ -32,7 +32,7 @@ public interface MovieService {
 
     MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException;
 
-    MovieDetailsDto findById(Integer movieId, Currency currency);
+    MovieDetailsDto findById(Integer movieId, Currency currency) throws ExecutionException, InterruptedException;
 
     MovieDetailsDto add(AddMovieDto addMovieDto);
 
