@@ -30,7 +30,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.ref.SoftReference;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -123,7 +125,10 @@ public class DefaultMovieService implements MovieService {
     public MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException {
 
         if (movieCache.contains(movieId)) {
-            return movieCache.get(movieId);
+            MovieDetailsDto movieDetailsDto = movieCache.get(movieId);
+            if (movieDetailsDto != null) {
+                return movieCache.get(movieId);
+            }
         }
 
         MovieCustom movieCustom = movieRepoCustom.findById(movieId)
@@ -165,8 +170,8 @@ public class DefaultMovieService implements MovieService {
             reviewFuture.cancel(true);
         }
 
-        MovieDetailsDto movieDetailsDtoCached = movieCache.put(movieId, movieDetailsDto);
-        if (movieDetailsDtoCached != null) {
+        Optional<SoftReference<MovieDetailsDto>> movieDetailsDtoCached = movieCache.put(movieId, movieDetailsDto);
+        if (movieDetailsDtoCached.isPresent()) {
             log.error(
                     "Movie {} should be retrieved from cache, however it was retrieved from repository and cache was overwritten",
                     movieId);
@@ -207,7 +212,7 @@ public class DefaultMovieService implements MovieService {
 
         MovieDetailsDto movieDetailsDtoUpdated = movieMapper.toMovieDetailsDto(updatedMovie);
 
-        if (movieCache.contains(movieId)){
+        if (movieCache.contains(movieId)) {
             movieCache.remove(movieId);
             movieCache.put(movieId, movieDetailsDtoUpdated);
         }

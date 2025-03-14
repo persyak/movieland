@@ -2,13 +2,16 @@ package com.ohorodnik.movieland.cache;
 
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 
+import java.lang.ref.SoftReference;
+import java.util.Optional;
+
 public interface MovieCache {
 
     MovieDetailsDto get(Integer movieId);
 
-    MovieDetailsDto put(Integer id, MovieDetailsDto editMovieDto);
+    Optional<SoftReference<MovieDetailsDto>> put(Integer id, MovieDetailsDto editMovieDto);
 
-    boolean  contains(Integer id);
+    boolean contains(Integer id);
 
     MovieDetailsDto remove(Integer id);
 }
