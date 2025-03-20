@@ -14,6 +14,8 @@ spring:
 caching:
   spring:
     genreListTTL: 14400000
+  movie:
+    size: 10
 
 scheduler:
   thread:

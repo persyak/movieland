@@ -30,9 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.ref.SoftReference;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -124,11 +122,9 @@ public class DefaultMovieService implements MovieService {
     @Transactional(readOnly = true)
     public MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException {
 
-        if (movieCache.contains(movieId)) {
-            MovieDetailsDto movieDetailsDto = movieCache.get(movieId);
-            if (movieDetailsDto != null) {
-                return movieCache.get(movieId);
-            }
+        MovieDetailsDto cachedMovieDetailsDto = movieCache.get(movieId);
+        if (cachedMovieDetailsDto != null) {
+            return cachedMovieDetailsDto;
         }
 
         MovieCustom movieCustom = movieRepoCustom.findById(movieId)
@@ -170,12 +166,7 @@ public class DefaultMovieService implements MovieService {
             reviewFuture.cancel(true);
         }
 
-        Optional<SoftReference<MovieDetailsDto>> movieDetailsDtoCached = movieCache.put(movieId, movieDetailsDto);
-        if (movieDetailsDtoCached.isPresent()) {
-            log.error(
-                    "Movie {} should be retrieved from cache, however it was retrieved from repository and cache was overwritten",
-                    movieId);
-        }
+        movieCache.put(movieId, movieDetailsDto);
 
         return movieDetailsDto;
 
@@ -211,11 +202,7 @@ public class DefaultMovieService implements MovieService {
         Movie updatedMovie = movieMapper.update(movie, editMovieDto);
 
         MovieDetailsDto movieDetailsDtoUpdated = movieMapper.toMovieDetailsDto(updatedMovie);
-
-        if (movieCache.contains(movieId)) {
-            movieCache.remove(movieId);
-            movieCache.put(movieId, movieDetailsDtoUpdated);
-        }
+        movieCache.put(movieId, movieDetailsDtoUpdated);
 
         return movieDetailsDtoUpdated;
     }
