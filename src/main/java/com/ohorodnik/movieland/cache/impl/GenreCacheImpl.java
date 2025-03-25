@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GenreCacheImpl implements GenreCache {
 
-    private List<Genre> genres;
+    private volatile List<Genre> genres;
 
     private final GenreRepository genreRepository;
 

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +22,7 @@ public class MovieCacheImpl implements MovieCache {
     private int capacity;
 
     private final Map<Integer, SoftReference<MovieNode>> cacheMap = new ConcurrentHashMap<>();
-    private final LinkedList<Integer> lruList = new LinkedList<>();
+    private final List<Integer> lruList = Collections.synchronizedList(new LinkedList<>());
     private final ReferenceQueue<MovieNode> queue = new ReferenceQueue<>();
 
     @Override

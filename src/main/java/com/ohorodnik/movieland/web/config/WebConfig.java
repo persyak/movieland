@@ -1,6 +1,5 @@
-package com.ohorodnik.movieland.config;
+package com.ohorodnik.movieland.web.config;
 
-import com.ohorodnik.movieland.config.logging.LoggerInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

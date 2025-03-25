@@ -16,6 +16,8 @@ caching:
     genreListTTL: 14400000
   movie:
     size: 10
+  currency:
+    exchangeRatesUrl: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange
 
 scheduler:
   thread:

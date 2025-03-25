@@ -1,12 +1,15 @@
 package com.ohorodnik.movieland.utils.rest.impl;
 
 import com.ohorodnik.movieland.utils.rest.UrlBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ExchangeRateUrlBuilder implements UrlBuilder {
 
-    private static final String BASEURL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange";
+    @Value("${caching.currency.exchangeRatesUrl}")
+    private String BASEURL;
+
     private static final String VALCODEPARAM = "valcode";
     private static final String DATEPARAM = "date";
     private static final String JSONSUFFIX = "json";
