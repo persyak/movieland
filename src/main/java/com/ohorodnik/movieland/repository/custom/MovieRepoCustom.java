@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface MovieRepoCustom extends JpaRepository<MovieCustom, Integer> {
 
-    @Query(value = "SELECT country_id FROM movie_country mc WHERE mc.movie_id = %:movieId%", nativeQuery = true)
-    List<Integer> findReviewId(Integer movieId);
+    @Query(value = "SELECT country_id FROM movieland.movie_country mc WHERE mc.movie_id = %:movieId%", nativeQuery = true)
+    List<Integer> findCountryId(Integer movieId);
 
-    @Query(value = "SELECT genre_id FROM movie_genre mg WHERE mg.movie_id = %:movieId%", nativeQuery = true)
+    @Query(value = "SELECT genre_id FROM movieland.movie_genre mg WHERE mg.movie_id = %:movieId%", nativeQuery = true)
     List<Integer> findGenreId(Integer movieId);
 }

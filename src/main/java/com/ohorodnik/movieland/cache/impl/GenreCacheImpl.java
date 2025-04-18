@@ -29,7 +29,7 @@ public class GenreCacheImpl implements GenreCache {
     }
 
     @PostConstruct
-    private void initCache() {
+    public void initCache() {
         genres = genreRepository.findAll();
     }
 

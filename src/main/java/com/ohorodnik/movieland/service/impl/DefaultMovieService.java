@@ -140,7 +140,7 @@ public class DefaultMovieService implements MovieService {
 
 //        List<ReviewDto> reviewDtoList = reviewService.findByMovieIdCustom(movieId);
 
-        Callable<List<CountryDto>> countryTask = () -> countryService.find(movieRepoCustom.findReviewId(movieId));
+        Callable<List<CountryDto>> countryTask = () -> countryService.find(movieRepoCustom.findCountryId(movieId));
         Callable<List<GenreDto>> genreTask = () -> genreService.findByGenreIdList(movieRepoCustom.findGenreId(movieId));
         Callable<List<ReviewDto>> reviewTask = () -> reviewService.findByMovieIdCustom(movieId);
 

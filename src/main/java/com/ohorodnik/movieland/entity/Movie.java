@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -20,6 +21,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,6 +35,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@DynamicUpdate
+@OptimisticLocking(type = OptimisticLockType.NONE)
 @Table(name = "movie", schema = "movieland")
 public class Movie {
 
@@ -72,6 +78,11 @@ public class Movie {
     @JoinColumn(name = "movie_id")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
+
+    //If we use @OptimisticLocking with type = All or DIRtY, we might avoid using version.
+    //It will be something like versionless optimistic locking.
+    @Version
+    private Integer version;
 
     public void addReview(Review review) {
         reviews.add(review);
