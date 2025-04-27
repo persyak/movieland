@@ -384,42 +384,6 @@ public class DefaultMovieServiceTest {
 
     @Test
     public void testFindById_whenUserIsAvailable() throws ExecutionException, InterruptedException {
-//This test has been adopted to latest method findById implementation.
-
-//        Movie expectedMovie = Movie.builder()
-//                .id(1)
-//                .nameUa("Втеча з Шоушенка")
-//                .nameNative("The Shawshank Redemption")
-//                .yearOfRelease(LocalDate.of(1994, 1, 1))
-//                .description("testDescription1")
-//                .rating(8.9)
-//                .price(140.45)
-//                .picturePath("picturePath1")
-//                .countries(List.of(Country.builder().id(1).name("США").build()))
-//                .genres(List.of(Genre.builder().id(1).name("драма").build(),
-//                        Genre.builder().id(2).name("кримінал").build()))
-//                .reviews(List.of(
-//                        Review.builder().id(1).user(User.builder().id(1).nickname("reviewUser1").build())
-//                                .description("reviewDescription1").build()))
-//                .build();
-
-//        MovieDetailsDto movieDetailsDto = MovieDetailsDto.builder()
-//                .id(1)
-//                .nameUa("Втеча з Шоушенка")
-//                .nameNative("The Shawshank Redemption")
-//                .yearOfRelease(Year.of(1994))
-//                .description("testDescription1")
-//                .rating(8.9)
-//                .price(140.45)
-//                .picturePath("picturePath1")
-//                .countries(List.of(CountryDto.builder().id(1).name("США").build()))
-//                .genres(List.of(GenreDto.builder().id(1).name("драма").build(),
-//                        GenreDto.builder().id(2).name("кримінал").build()))
-//                .reviews(List.of(
-//                        ReviewDto.builder().id(1).user(UserDto.builder().id(1).nickname("reviewUser1").build())
-//                                .description("reviewDescription1").build()))
-//                .build();
-
         MovieCustom expectedMovieCustom = MovieCustom.builder()
                 .id(1)
                 .nameUa("Втеча з Шоушенка")
@@ -447,9 +411,6 @@ public class DefaultMovieServiceTest {
         List<Integer> genreIds = List.of(1, 2);
         List<GenreDto> genreDtoList = List.of(GenreDto.builder().id(1).name("драма").build(),
                 GenreDto.builder().id(2).name("кримінал").build());
-
-//        when(movieRepository.findById(1)).thenReturn(Optional.of(expectedMovie));
-//        when(movieMapper.toMovieDetailsDto(expectedMovie)).thenReturn(movieDetailsDto);
 
         when(movieRepoCustom.findById(1)).thenReturn(Optional.of(expectedMovieCustom));
         when(movieMapper.toMovieDetailsDto(expectedMovieCustom)).thenReturn(movieDetailsDtoCustom);
@@ -485,7 +446,6 @@ public class DefaultMovieServiceTest {
 
     @Test
     public void testFindById_whenMovieIsNotPresent() {
-//        when(movieRepository.findById(2)).thenReturn(Optional.empty());
         when(movieRepoCustom.findById(2)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(MovieNotFoundException.class, () -> {

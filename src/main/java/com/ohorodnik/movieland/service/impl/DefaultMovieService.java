@@ -2,12 +2,9 @@ package com.ohorodnik.movieland.service.impl;
 
 import com.ohorodnik.movieland.cache.MovieCache;
 import com.ohorodnik.movieland.dto.AddMovieDto;
-import com.ohorodnik.movieland.dto.CountryDto;
 import com.ohorodnik.movieland.dto.EditMovieDto;
-import com.ohorodnik.movieland.dto.GenreDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
-import com.ohorodnik.movieland.dto.ReviewDto;
 import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.entity.custom.MovieCustom;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
@@ -15,11 +12,9 @@ import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
 import com.ohorodnik.movieland.repository.custom.MovieRepoCustom;
-import com.ohorodnik.movieland.service.CountryService;
-import com.ohorodnik.movieland.service.GenreService;
+import com.ohorodnik.movieland.service.MovieEnrichmentService;
 import com.ohorodnik.movieland.service.MovieService;
 import com.ohorodnik.movieland.service.RatesService;
-import com.ohorodnik.movieland.service.ReviewService;
 import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
@@ -31,13 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Service
 @Slf4j
@@ -45,14 +36,12 @@ import java.util.concurrent.TimeoutException;
 public class DefaultMovieService implements MovieService {
 
     private final RatesService ratesService;
-    private final CountryService countryService;
-    private final GenreService genreService;
-    private final ReviewService reviewService;
     private final MovieRepository movieRepository;
     private final MovieRepoCustom movieRepoCustom;
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
     private final MovieCache movieCache;
+    private final MovieEnrichmentService movieEnrichmentService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -132,46 +121,14 @@ public class DefaultMovieService implements MovieService {
 
         MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieCustom);
 
-//        List<Integer> countryIds = movieRepoCustom.findReviewId(movieId);
-//        List<CountryDto> countryDtoList = countryService.find(countryIds);
-
-//        List<Integer> genreIds = movieRepoCustom.findGenreId(movieId);
-//        List<GenreDto> genreDtoList = genreService.findByGenreIdList(genreIds);
-
-//        List<ReviewDto> reviewDtoList = reviewService.findByMovieIdCustom(movieId);
-
-        Callable<List<CountryDto>> countryTask = () -> countryService.find(movieRepoCustom.findCountryId(movieId));
-        Callable<List<GenreDto>> genreTask = () -> genreService.findByGenreIdList(movieRepoCustom.findGenreId(movieId));
-        Callable<List<ReviewDto>> reviewTask = () -> reviewService.findByMovieIdCustom(movieId);
-
-        Future<List<CountryDto>> countryFuture = executorService.submit(countryTask);
-        Future<List<GenreDto>> genreFuture = executorService.submit(genreTask);
-        Future<List<ReviewDto>> reviewFuture = executorService.submit(reviewTask);
-
-        try {
-            movieDetailsDto.setCountries(countryFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            countryFuture.cancel(true);
-        }
-
-        try {
-            movieDetailsDto.setGenres(genreFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            genreFuture.cancel(true);
-        }
-
-        try {
-            movieDetailsDto.setReviews(reviewFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            reviewFuture.cancel(true);
-        }
+        movieEnrichmentService.enrich(movieDetailsDto,
+                MovieEnrichmentService.EnrichmentType.COUNTRIES,
+                MovieEnrichmentService.EnrichmentType.GENRES,
+                MovieEnrichmentService.EnrichmentType.REVIEWS);
 
         movieCache.put(movieId, movieDetailsDto);
 
         return movieDetailsDto;
-
-//        return movieMapper.toMovieDetailsDto(movieRepository.findById(movieId)
-//                .orElseThrow(() -> new MovieNotFoundException("No such movie found")));
     }
 
     @Override
