@@ -7,6 +7,13 @@ spring:
       maximumPoolSize: 10
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+          config_location: classpath:ehcache.xml
 
 caching:
   spring:

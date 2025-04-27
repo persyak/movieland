@@ -1,8 +1,8 @@
 package com.ohorodnik.movieland.service.impl;
 
-import com.ohorodnik.movieland.cache.GenreCache;
 import com.ohorodnik.movieland.dto.GenreDto;
 import com.ohorodnik.movieland.entity.Genre;
+import com.ohorodnik.movieland.repository.GenreRepository;
 import com.ohorodnik.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class DefaultGenreServiceTest {
     @Autowired
     private GenreService genreService;
     @MockitoBean
-    private GenreCache genreCache;
+    private GenreRepository genreRepository;
 
     @BeforeEach
     public void setup() {
@@ -35,7 +35,7 @@ public class DefaultGenreServiceTest {
                 .name("testGenre2")
                 .build();
 
-        Mockito.when(genreCache.findAll()).thenReturn(List.of(firstGenre, secondGenre));
+        Mockito.when(genreRepository.findAll()).thenReturn(List.of(firstGenre, secondGenre));
     }
 
     @Test

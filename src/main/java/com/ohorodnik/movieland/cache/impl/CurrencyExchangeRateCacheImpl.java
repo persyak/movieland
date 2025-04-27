@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CurrencyExchangeRateCacheImpl implements CurrencyExchangeRateCache {
 
-    private Map<Currency, RateDetailsDto> rates;
+    private volatile Map<Currency, RateDetailsDto> rates;
     private final WebClient.Builder webClientBuilder;
     @Qualifier("ExchangeRateUrlBuilder")
     private final UrlBuilder urlBuilder;
@@ -43,7 +43,7 @@ public class CurrencyExchangeRateCacheImpl implements CurrencyExchangeRateCache 
         rates = provideRates();
     }
 
-    //It will run at 9:01 AM according to system time, where application is run. Usually rate is updated at 9 AM.
+    //It will run at 9:01 AM according to system time, where application is running. Usually rate is updated at 9 AM.
     @Scheduled(cron = "1 9 * * * ?")
     private void updateCache() {
         rates = provideRates();

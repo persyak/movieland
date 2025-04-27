@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface ReviewRepoCustom extends JpaRepository<ReviewCustom, Integer> {
 
-    @Query(value = "SELECT * FROM review r WHERE r.movie_id = %:movieId%", nativeQuery = true)
+    @Query(value = "SELECT * FROM movieland.review r WHERE r.movie_id = %:movieId%", nativeQuery = true)
     List<ReviewCustom> findByMovieId(Integer movieId);
 
-    @Query(value = "SELECT user_id FROM review r WHERE r.id = %:reviewId%", nativeQuery = true)
+    @Query(value = "SELECT user_id FROM movieland.review r WHERE r.id = %:reviewId%", nativeQuery = true)
     Integer findUserIdByReviewId(Integer reviewId);
 }

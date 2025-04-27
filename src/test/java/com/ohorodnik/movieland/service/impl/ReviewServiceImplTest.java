@@ -12,6 +12,7 @@ import com.ohorodnik.movieland.exception.ReviewExistsException;
 import com.ohorodnik.movieland.mapper.ReviewMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.ReviewRepository;
+import com.ohorodnik.movieland.repository.custom.ReviewRepoCustom;
 import com.ohorodnik.movieland.utils.enums.Type;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,11 +39,13 @@ public class ReviewServiceImplTest {
     @Autowired
     private ReviewMapper reviewMapper;
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
     @MockitoBean
     private MovieRepository movieRepository;
     @MockitoBean
     private ReviewRepository reviewRepository;
+    @MockitoBean
+    private ReviewRepoCustom reviewRepoCustom;
 
     private static Movie movie;
     private static AddReviewDto addReviewDto;

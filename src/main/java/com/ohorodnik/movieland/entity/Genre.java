@@ -12,6 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.cache.annotation.Cacheable;
 
 @Builder
 @NoArgsConstructor
@@ -19,6 +22,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "genre", schema = "movieland")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "genreCache")
 public class Genre {
 
     @Id

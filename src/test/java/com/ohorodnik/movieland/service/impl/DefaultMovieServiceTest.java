@@ -15,12 +15,12 @@ import com.ohorodnik.movieland.dto.UserDto;
 import com.ohorodnik.movieland.entity.Country;
 import com.ohorodnik.movieland.entity.Genre;
 import com.ohorodnik.movieland.entity.Movie;
-import com.ohorodnik.movieland.entity.Review;
-import com.ohorodnik.movieland.entity.User;
+import com.ohorodnik.movieland.entity.custom.MovieCustom;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
+import com.ohorodnik.movieland.repository.custom.MovieRepoCustom;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +53,14 @@ public class DefaultMovieServiceTest {
     private MovieRepository movieRepository;
     @MockitoBean
     private MovieRepositoryCustom movieRepositoryCustom;
+    @MockitoBean
+    private MovieRepoCustom movieRepoCustom;
+    @MockitoBean
+    private CountryServiceImpl countryService;
+    @MockitoBean
+    private DefaultGenreService defaultGenreService;
+    @MockitoBean
+    private ReviewServiceImpl reviewService;
 
     @BeforeEach
     public void setup() {
@@ -376,7 +384,7 @@ public class DefaultMovieServiceTest {
 
     @Test
     public void testFindById_whenUserIsAvailable() throws ExecutionException, InterruptedException {
-        Movie expectedMovie = Movie.builder()
+        MovieCustom expectedMovieCustom = MovieCustom.builder()
                 .id(1)
                 .nameUa("Втеча з Шоушенка")
                 .nameNative("The Shawshank Redemption")
@@ -385,15 +393,9 @@ public class DefaultMovieServiceTest {
                 .rating(8.9)
                 .price(140.45)
                 .picturePath("picturePath1")
-                .countries(List.of(Country.builder().id(1).name("США").build()))
-                .genres(List.of(Genre.builder().id(1).name("драма").build(),
-                        Genre.builder().id(2).name("кримінал").build()))
-                .reviews(List.of(
-                        Review.builder().id(1).user(User.builder().id(1).nickname("reviewUser1").build())
-                                .description("reviewDescription1").build()))
                 .build();
 
-        MovieDetailsDto movieDetailsDto = MovieDetailsDto.builder()
+        MovieDetailsDto movieDetailsDtoCustom = MovieDetailsDto.builder()
                 .id(1)
                 .nameUa("Втеча з Шоушенка")
                 .nameNative("The Shawshank Redemption")
@@ -402,16 +404,23 @@ public class DefaultMovieServiceTest {
                 .rating(8.9)
                 .price(140.45)
                 .picturePath("picturePath1")
-                .countries(List.of(CountryDto.builder().id(1).name("США").build()))
-                .genres(List.of(GenreDto.builder().id(1).name("драма").build(),
-                        GenreDto.builder().id(2).name("кримінал").build()))
-                .reviews(List.of(
-                        ReviewDto.builder().id(1).user(UserDto.builder().id(1).nickname("reviewUser1").build())
-                                .description("reviewDescription1").build()))
                 .build();
 
-        when(movieRepository.findById(1)).thenReturn(Optional.of(expectedMovie));
-        when(movieMapper.toMovieDetailsDto(expectedMovie)).thenReturn(movieDetailsDto);
+        List<Integer> countryIds = List.of(1);
+        List<CountryDto> countryDtoList = List.of(CountryDto.builder().id(1).name("США").build());
+        List<Integer> genreIds = List.of(1, 2);
+        List<GenreDto> genreDtoList = List.of(GenreDto.builder().id(1).name("драма").build(),
+                GenreDto.builder().id(2).name("кримінал").build());
+
+        when(movieRepoCustom.findById(1)).thenReturn(Optional.of(expectedMovieCustom));
+        when(movieMapper.toMovieDetailsDto(expectedMovieCustom)).thenReturn(movieDetailsDtoCustom);
+        when(movieRepoCustom.findCountryId(1)).thenReturn(countryIds);
+        when(countryService.find(countryIds)).thenReturn(countryDtoList);
+        when(movieRepoCustom.findGenreId(1)).thenReturn(genreIds);
+        when(defaultGenreService.findByGenreIdList(genreIds)).thenReturn(genreDtoList);
+        when(reviewService.findByMovieIdCustom(1)).thenReturn(List.of(
+                ReviewDto.builder().id(1).user(UserDto.builder().id(1).nickname("reviewUser1").build())
+                        .description("reviewDescription1").build()));
 
         MovieDetailsDto movieDetailsActualsDto = defaultMovieService.findById(1);
 
@@ -436,8 +445,8 @@ public class DefaultMovieServiceTest {
     }
 
     @Test
-    public void testFindById_whenUserIsNotPresent() {
-        when(movieRepository.findById(2)).thenReturn(Optional.empty());
+    public void testFindById_whenMovieIsNotPresent() {
+        when(movieRepoCustom.findById(2)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(MovieNotFoundException.class, () -> {
             defaultMovieService.findById(2);
