@@ -3,7 +3,6 @@ package com.ohorodnik.movieland.web.controller;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
-import com.ohorodnik.movieland.cache.impl.GenreCacheImpl;
 import com.ohorodnik.movieland.dto.AddCountryDto;
 import com.ohorodnik.movieland.dto.AddGenreDto;
 import com.ohorodnik.movieland.dto.AddMovieDto;
@@ -57,8 +56,8 @@ public class MovieControllerITest extends BaseContainerImpl {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private GenreCacheImpl genreCache;
+//    @Autowired
+//    private GenreCacheImpl genreCache;
 
     @Test
     @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
@@ -303,8 +302,6 @@ public class MovieControllerITest extends BaseContainerImpl {
             cleanBefore = true,
             skipCleaningFor = "flyway_schema_history")
     public void testFindById() throws Exception {
-
-        genreCache.initCache();
 
         reset();
 

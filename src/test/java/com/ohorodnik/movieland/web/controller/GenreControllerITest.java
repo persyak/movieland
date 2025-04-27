@@ -2,8 +2,6 @@ package com.ohorodnik.movieland.web.controller;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.ohorodnik.movieland.BaseContainerImpl;
-import com.ohorodnik.movieland.cache.impl.GenreCacheImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,13 +23,6 @@ public class GenreControllerITest extends BaseContainerImpl {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private GenreCacheImpl genreCache;
-
-    @BeforeEach
-    public void setup() {
-        genreCache.initCache();
-    }
 
     @Test
     @DataSet(value = GENRE_DATASET, disableConstraints = true, skipCleaningFor = "flyway_schema_history")
@@ -49,6 +40,15 @@ public class GenreControllerITest extends BaseContainerImpl {
                 .andExpect(jsonPath("$[1].id").value("2"))
                 .andExpect(jsonPath("$[1].name").value("genre2"));
 
-        assertSelectCount(0);
+        mockMvc.perform(get("/api/v1/genres")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(5))
+                .andExpect(jsonPath("$[0].id").value("1"))
+                .andExpect(jsonPath("$[0].name").value("genre1"))
+                .andExpect(jsonPath("$[1].id").value("2"))
+                .andExpect(jsonPath("$[1].name").value("genre2"));
+
+        assertSelectCount(1);
     }
 }
