@@ -12,14 +12,11 @@ import com.ohorodnik.movieland.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,41 +30,44 @@ public class MovieEnrichmentServiceImpl implements MovieEnrichmentService {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Override
-    public void enrich(MovieDetailsDto movieDetailsDto, EnrichmentType... enrichmentType) throws ExecutionException, InterruptedException {
+    public void enrich(MovieDetailsDto movieDetailsDto, EnrichmentType... enrichmentType) {
+
+        List<Runnable> tasks = new ArrayList<>();
+
         for (EnrichmentType type : enrichmentType) {
             switch (type) {
                 case COUNTRIES:
-                    Callable<List<CountryDto>> countryTask = () -> countryService
-                            .find(movieRepoCustom.findCountryId(movieDetailsDto.getId()));
-                    Future<List<CountryDto>> countryFuture = executorService.submit(countryTask);
-                    try {
-                        movieDetailsDto.setCountries(countryFuture.get(5, TimeUnit.SECONDS));
-                    } catch (TimeoutException e) {
-                        countryFuture.cancel(true);
-                    }
+                    tasks.add(() -> {
+                        List<CountryDto> countries = countryService
+                                .find(movieRepoCustom.findCountryId(movieDetailsDto.getId()));
+                        movieDetailsDto.setCountries(countries);
+                    });
                     break;
                 case GENRES:
-                    Callable<List<GenreDto>> genreTask = () -> genreService
-                            .findByGenreIdList(movieRepoCustom.findGenreId(movieDetailsDto.getId()));
-                    Future<List<GenreDto>> genreFuture = executorService.submit(genreTask);
-                    try {
-                        movieDetailsDto.setGenres(genreFuture.get(5, TimeUnit.SECONDS));
-                    } catch (TimeoutException e) {
-                        genreFuture.cancel(true);
-                    }
+                    tasks.add(() -> {
+                        List<GenreDto> genres = genreService
+                                .findByGenreIdList(movieRepoCustom.findGenreId(movieDetailsDto.getId()));
+                        movieDetailsDto.setGenres(genres);
+                    });
                     break;
                 case REVIEWS:
-                    Callable<List<ReviewDto>> reviewTask = () -> reviewService.findByMovieIdCustom(movieDetailsDto.getId());
-                    Future<List<ReviewDto>> reviewFuture = executorService.submit(reviewTask);
-                    try {
-                        movieDetailsDto.setReviews(reviewFuture.get(5, TimeUnit.SECONDS));
-                    } catch (TimeoutException e) {
-                        reviewFuture.cancel(true);
-                    }
+                    tasks.add(() -> {
+                        List<ReviewDto> reviews = reviewService
+                                .findByMovieIdCustom(movieDetailsDto.getId());
+                        movieDetailsDto.setReviews(reviews);
+                    });
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown enrichment type: " + type);
             }
+        }
+
+        List<Callable<Object>> callables = tasks.stream().map(Executors::callable).toList();
+
+        try {
+            executorService.invokeAll(callables);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }
