@@ -4,7 +4,7 @@ import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
-import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.service.MovieCachedService;
 import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
@@ -34,28 +34,28 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
-    private final MovieService movieService;
+    private final MovieCachedService movieCachedService;
 
     @GetMapping
     protected List<MovieDto> findAll(MovieSortingRequest movieSortingRequest) {
         log.info("Query get all movies");
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
-            return movieService.findAll();
+            return movieCachedService.findAll();
         }
         if (movieSortingRequest.getRatingSortingOrder() != null && movieSortingRequest.getPriceSortingOrder() != null) {
-            return movieService.findAllCustomPriceAndRatingSorting(movieSortingRequest.getPriceSortingOrder());
+            return movieCachedService.findAllCustomPriceAndRatingSorting(movieSortingRequest.getPriceSortingOrder());
         }
         if (movieSortingRequest.getRatingSortingOrder() != null) {
-            return movieService.findAll(movieSortingRequest.getRatingSortingOrder());
+            return movieCachedService.findAll(movieSortingRequest.getRatingSortingOrder());
         }
-        return movieService.findAll(movieSortingRequest.getPriceSortingOrder());
+        return movieCachedService.findAll(movieSortingRequest.getPriceSortingOrder());
     }
 
     @GetMapping("/random")
     protected List<MovieDto> findRandomThree() {
         log.info("Query get random three movies");
-        return movieService.findRandomThree();
+        return movieCachedService.findRandomThree();
     }
 
     @GetMapping("/genres/{genreId}")
@@ -63,35 +63,35 @@ public class MovieController {
         log.info("Query get movies by genre id {}", genreId);
 
         if (movieSortingRequest.getRatingSortingOrder() == null && movieSortingRequest.getPriceSortingOrder() == null) {
-            return movieService.findByGenreId(genreId);
+            return movieCachedService.findByGenreId(genreId);
         }
         if (movieSortingRequest.getRatingSortingOrder() != null && movieSortingRequest.getPriceSortingOrder() != null) {
-            return movieService.findByGenreId(
+            return movieCachedService.findByGenreId(
                     genreId, movieSortingRequest.getPriceSortingOrder(), movieSortingRequest.getRatingSortingOrder());
         }
         if (movieSortingRequest.getRatingSortingOrder() != null) {
-            return movieService.findByGenreId(genreId, movieSortingRequest.getRatingSortingOrder());
+            return movieCachedService.findByGenreId(genreId, movieSortingRequest.getRatingSortingOrder());
         }
-        return movieService.findByGenreId(genreId, movieSortingRequest.getPriceSortingOrder());
+        return movieCachedService.findByGenreId(genreId, movieSortingRequest.getPriceSortingOrder());
     }
 
     @GetMapping("/movie/{id}")
     protected MovieDetailsDto findById(@PathVariable Integer id, Currency currency) throws ExecutionException, InterruptedException {
         log.info("Query movie details by movie id {}", id);
-        return currency == null ? movieService.findById(id) : movieService.findById(id, currency);
+        return currency == null ? movieCachedService.findById(id) : movieCachedService.findById(id, currency);
     }
 
     @PostMapping("/movie")
     @PreAuthorize("hasAuthority('A')")
     @ResponseStatus(HttpStatus.CREATED)
     protected MovieDetailsDto add(@Valid @RequestBody AddMovieDto addMovieDto) {
-        return movieService.add(addMovieDto);
+        return movieCachedService.add(addMovieDto);
     }
 
     @PutMapping("/movie/{id}")
     @PreAuthorize("hasAuthority('A')")
     protected MovieDetailsDto edit(@PathVariable Integer id, @Valid @RequestBody EditMovieDto editMovieDto) {
-        MovieDetailsDto movieDetailsDto = movieService.edit(id, editMovieDto);
+        MovieDetailsDto movieDetailsDto = movieCachedService.edit(id, editMovieDto);
         log.info("Movie {} has been updated", id);
         return movieDetailsDto;
     }

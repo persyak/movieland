@@ -6,14 +6,11 @@ import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.entity.Movie;
-import com.ohorodnik.movieland.entity.custom.MovieCustom;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
-import com.ohorodnik.movieland.repository.custom.MovieRepoCustom;
-import com.ohorodnik.movieland.service.MovieEnrichmentService;
-import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.service.MovieCachedService;
 import com.ohorodnik.movieland.service.RatesService;
 import com.ohorodnik.movieland.utils.enums.Currency;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
@@ -33,15 +30,13 @@ import java.util.concurrent.Executors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultMovieService implements MovieService {
+public class DefaultMovieCachedService implements MovieCachedService {
 
     private final RatesService ratesService;
     private final MovieRepository movieRepository;
-    private final MovieRepoCustom movieRepoCustom;
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
     private final MovieCache movieCache;
-    private final MovieEnrichmentService movieEnrichmentService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -110,25 +105,7 @@ public class DefaultMovieService implements MovieService {
     @Override
     @Transactional(readOnly = true)
     public MovieDetailsDto findById(Integer movieId) throws ExecutionException, InterruptedException {
-
-        MovieDetailsDto cachedMovieDetailsDto = movieCache.get(movieId);
-        if (cachedMovieDetailsDto != null) {
-            return cachedMovieDetailsDto;
-        }
-
-        MovieCustom movieCustom = movieRepoCustom.findById(movieId)
-                .orElseThrow(() -> new MovieNotFoundException("No such movie found"));
-
-        MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieCustom);
-
-        movieEnrichmentService.enrich(movieDetailsDto,
-                MovieEnrichmentService.EnrichmentType.COUNTRIES,
-                MovieEnrichmentService.EnrichmentType.GENRES,
-                MovieEnrichmentService.EnrichmentType.REVIEWS);
-
-        movieCache.put(movieId, movieDetailsDto);
-
-        return movieDetailsDto;
+        return movieCache.get(movieId);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.ohorodnik.movieland.cache.impl;
 import com.ohorodnik.movieland.annotation.Cache;
 import com.ohorodnik.movieland.cache.MovieCache;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
+import com.ohorodnik.movieland.service.MovieService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.ref.Reference;
@@ -14,12 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 @Cache
+@RequiredArgsConstructor
 public class MovieCacheImpl implements MovieCache {
 
     @Value("${caching.movie.size:10}")
     private int capacity;
+
+    private final MovieService movieService;
 
     private final Map<Integer, SoftReference<MovieNode>> cacheMap = new ConcurrentHashMap<>();
     private final List<Integer> lruList = Collections.synchronizedList(new LinkedList<>());
@@ -30,14 +36,21 @@ public class MovieCacheImpl implements MovieCache {
 
         removeEmptyRefs();
 
-        if (!cacheMap.containsKey(movieId)) {
-            return null;
-        }
-
-        lruList.remove(movieId);
-        lruList.addFirst(movieId);
-
-        return Objects.requireNonNull(cacheMap.get(movieId).get()).movieDetailsDto;
+        SoftReference<MovieNode> nodeSoftReference = cacheMap.compute(movieId, (k, v) -> {
+            if (v == null || v.get() == null) {
+                try {
+                    MovieDetailsDto movieDetailsDto = movieService.findByIdAndEnrich(movieId);
+                    return new SoftReference<>(new MovieNode(movieId, movieDetailsDto), queue);
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // Update the reference to the movie node
+            lruList.remove(movieId);
+            lruList.addFirst(movieId);
+            return v;
+        });
+        return Objects.requireNonNull(nodeSoftReference.get()).movieDetailsDto;
     }
 
     @Override
@@ -47,19 +60,20 @@ public class MovieCacheImpl implements MovieCache {
 
         MovieNode movieNode = new MovieNode(movieId, editMovieDto);
 
-        if (cacheMap.containsKey(movieId)) {
-            cacheMap.put(movieId, new SoftReference<>(movieNode, queue));
+        cacheMap.compute(movieId, (k, v) -> {
+            if (v == null || v.get() == null) {
+                if (cacheMap.size() >= capacity) {
 
-            lruList.remove(movieId);
-        } else {
-            if (cacheMap.size() >= capacity) {
-
-                // Remove the least recently used item
-                Integer leastUsedKey = lruList.removeLast();
-                cacheMap.remove(leastUsedKey);
+                    // Remove the least recently used item
+                    Integer leastUsedKey = lruList.removeLast();
+                    cacheMap.remove(leastUsedKey);
+                }
+                return new SoftReference<>(movieNode, queue);
             }
-            cacheMap.put(movieId, new SoftReference<>(movieNode, queue));
-        }
+            lruList.remove(movieId);
+            return new SoftReference<>(movieNode, queue);
+        });
+        // Update the LRU list
         lruList.addFirst(movieId);
     }
 

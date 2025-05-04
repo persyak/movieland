@@ -43,10 +43,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class DefaultMovieServiceTest {
+public class DefaultMovieCachedServiceTest {
 
     @Autowired
-    private DefaultMovieService defaultMovieService;
+    private DefaultMovieCachedService defaultMovieCachedService;
     @MockitoBean
     private MovieMapper movieMapper;
     @MockitoBean
@@ -199,7 +199,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get list of four items on findAllMovies call")
     public void whenFindAll_thenReturnListOfFourMovies() {
-        List<MovieDto> found = defaultMovieService.findAll();
+        List<MovieDto> found = defaultMovieCachedService.findAll();
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -215,7 +215,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Return list of movies sorted by rating in desc when requested")
     public void whenFindAllWithRatingDesc_thenReturnSortedListByRatingDesc() {
-        List<MovieDto> found = defaultMovieService.findAll(RatingSortingOrder.desc);
+        List<MovieDto> found = defaultMovieCachedService.findAll(RatingSortingOrder.desc);
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -233,7 +233,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Return list of movies sorted by price in asc when requested")
     public void whenFindAllWithPriceAsc_thenReturnSortedListByPriceAsc() {
-        List<MovieDto> found = defaultMovieService.findAll(PriceSortingOrder.asc);
+        List<MovieDto> found = defaultMovieCachedService.findAll(PriceSortingOrder.asc);
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -251,7 +251,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Return list of movies sorted by price in desc when requested")
     public void whenFindAllWithPriceAsc_thenReturnSortedListByPriceDesc() {
-        List<MovieDto> found = defaultMovieService.findAll(PriceSortingOrder.desc);
+        List<MovieDto> found = defaultMovieCachedService.findAll(PriceSortingOrder.desc);
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -269,7 +269,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Return list of movies sorted by price in asc and rating when requested")
     public void testFindAllCustomPriceAscAndRatingSorting() {
-        List<MovieDto> found = defaultMovieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.asc);
+        List<MovieDto> found = defaultMovieCachedService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.asc);
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -287,7 +287,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Return list of movies sorted by price in desc and rating when requested")
     public void testFindAllCustomPriceDescAndRatingSorting() {
-        List<MovieDto> found = defaultMovieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.desc);
+        List<MovieDto> found = defaultMovieCachedService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.desc);
         MovieDto actual = found.getFirst();
 
         assertEquals(4, found.size());
@@ -305,13 +305,13 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get list of three random movies")
     public void whenFindThreeRandomMoviesRequested_thenReturnListOfThreeMovies() {
-        assertEquals(3, defaultMovieService.findRandomThree().size());
+        assertEquals(3, defaultMovieCachedService.findRandomThree().size());
     }
 
     @Test
     @DisplayName("Get list of four movies by genre id 1")
     public void whenFindMoviesByGenreId_thenReturnListOfFourMovies() {
-        List<MovieDto> found = defaultMovieService.findByGenreId(1);
+        List<MovieDto> found = defaultMovieCachedService.findByGenreId(1);
         assertEquals(4, found.size());
 
         MovieDto actual = found.getFirst();
@@ -328,7 +328,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get list of four movies by genre id 1, sorted by rating in desc")
     public void whenFindMoviesByGenreIdAndRatingSortingOrderDesc_thenReturnListOfFourMoviesSortedByRatingDesc() {
-        List<MovieDto> found = defaultMovieService.findByGenreId(1, RatingSortingOrder.desc);
+        List<MovieDto> found = defaultMovieCachedService.findByGenreId(1, RatingSortingOrder.desc);
         assertEquals(4, found.size());
 
         MovieDto actual = found.getFirst();
@@ -347,7 +347,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get list of four movies by genre id 1, sorted by price in asc")
     public void whenFindMoviesByGenreIdAndPriceSortingOrderAsc_thenReturnListOfFourMoviesSortedByPriceAsc() {
-        List<MovieDto> found = defaultMovieService.findByGenreId(1, PriceSortingOrder.asc);
+        List<MovieDto> found = defaultMovieCachedService.findByGenreId(1, PriceSortingOrder.asc);
         assertEquals(4, found.size());
 
         MovieDto actual = found.getFirst();
@@ -366,7 +366,7 @@ public class DefaultMovieServiceTest {
     @Test
     @DisplayName("Get list of four movies by genre id 1, sorted by price in desc")
     public void whenFindMoviesByGenreIdAndPriceSortingOrderDesc_thenReturnListOfFourMoviesSortedByPriceDesc() {
-        List<MovieDto> found = defaultMovieService.findByGenreId(1, PriceSortingOrder.desc);
+        List<MovieDto> found = defaultMovieCachedService.findByGenreId(1, PriceSortingOrder.desc);
         assertEquals(4, found.size());
 
         MovieDto actual = found.getFirst();
@@ -422,7 +422,7 @@ public class DefaultMovieServiceTest {
                 ReviewDto.builder().id(1).user(UserDto.builder().id(1).nickname("reviewUser1").build())
                         .description("reviewDescription1").build()));
 
-        MovieDetailsDto movieDetailsActualsDto = defaultMovieService.findById(1);
+        MovieDetailsDto movieDetailsActualsDto = defaultMovieCachedService.findById(1);
 
         assertEquals(1, movieDetailsActualsDto.getId());
         assertEquals("Втеча з Шоушенка", movieDetailsActualsDto.getNameUa());
@@ -449,7 +449,7 @@ public class DefaultMovieServiceTest {
         when(movieRepoCustom.findById(2)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(MovieNotFoundException.class, () -> {
-            defaultMovieService.findById(2);
+            defaultMovieCachedService.findById(2);
         });
         assertTrue(exception.getMessage().contains("No such movie found"));
     }
@@ -517,7 +517,7 @@ public class DefaultMovieServiceTest {
         when(movieRepository.save(movieToAdd)).thenReturn(movieExpected);
         when(movieMapper.toMovieDetailsDto(movieExpected)).thenReturn(movieDetailsDtoExpected);
 
-        MovieDetailsDto movieDetailsDtoActual = defaultMovieService.add(addMovieDto);
+        MovieDetailsDto movieDetailsDtoActual = defaultMovieCachedService.add(addMovieDto);
 
         assertEquals(1, movieDetailsDtoActual.getId());
         assertEquals("Втеча з Шоушенка", movieDetailsDtoActual.getNameUa());
@@ -597,7 +597,7 @@ public class DefaultMovieServiceTest {
         when(movieMapper.update(movieForUpdate, editMovieDto)).thenReturn(updatedMovie);
         when(movieMapper.toMovieDetailsDto(updatedMovie)).thenReturn(movieDetailsDtoExpected);
 
-        MovieDetailsDto actual = defaultMovieService.edit(1, editMovieDto);
+        MovieDetailsDto actual = defaultMovieCachedService.edit(1, editMovieDto);
 
         assertEquals(1, actual.getId());
         assertEquals("Нова Втеча з Шоушенка", actual.getNameUa());
@@ -627,7 +627,7 @@ public class DefaultMovieServiceTest {
         when(movieRepository.findById(2)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(MovieNotFoundException.class, () -> {
-            defaultMovieService.edit(2, editMovieDto);
+            defaultMovieCachedService.edit(2, editMovieDto);
         });
         assertTrue(exception.getMessage().contains("No such movie found"));
     }

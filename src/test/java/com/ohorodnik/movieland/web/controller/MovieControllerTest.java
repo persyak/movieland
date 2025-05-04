@@ -7,7 +7,7 @@ import com.ohorodnik.movieland.dto.MovieDto;
 import com.ohorodnik.movieland.dto.ReviewDto;
 import com.ohorodnik.movieland.dto.UserDto;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
-import com.ohorodnik.movieland.service.MovieService;
+import com.ohorodnik.movieland.service.MovieCachedService;
 import com.ohorodnik.movieland.utils.enums.PriceSortingOrder;
 import com.ohorodnik.movieland.utils.enums.RatingSortingOrder;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ public class MovieControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
-    private MovieService movieService;
+    private MovieCachedService movieCachedService;
 
     @BeforeEach
     public void setup() {
@@ -80,26 +80,26 @@ public class MovieControllerTest {
                 .picturePath("picturePath4")
                 .build();
 
-        Mockito.when(movieService.findAll())
+        Mockito.when(movieCachedService.findAll())
                 .thenReturn(List.of(firstMovieDto, secondMovieDto, thirdMovieDto, fourthdMovieDto));
-        Mockito.when(movieService.findAll(RatingSortingOrder.desc))
+        Mockito.when(movieCachedService.findAll(RatingSortingOrder.desc))
                 .thenReturn(List.of(secondMovieDto, firstMovieDto, fourthdMovieDto, thirdMovieDto));
-        Mockito.when(movieService.findAll(PriceSortingOrder.asc))
+        Mockito.when(movieCachedService.findAll(PriceSortingOrder.asc))
                 .thenReturn(List.of(firstMovieDto, secondMovieDto, fourthdMovieDto, thirdMovieDto));
-        Mockito.when(movieService.findAll(PriceSortingOrder.desc))
+        Mockito.when(movieCachedService.findAll(PriceSortingOrder.desc))
                 .thenReturn(List.of(thirdMovieDto, fourthdMovieDto, secondMovieDto, firstMovieDto));
-        Mockito.when(movieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.asc))
+        Mockito.when(movieCachedService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.asc))
                 .thenReturn(List.of(firstMovieDto, secondMovieDto, fourthdMovieDto, thirdMovieDto));
-        Mockito.when(movieService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.desc))
+        Mockito.when(movieCachedService.findAllCustomPriceAndRatingSorting(PriceSortingOrder.desc))
                 .thenReturn(List.of(thirdMovieDto, fourthdMovieDto, secondMovieDto, firstMovieDto));
-        Mockito.when(movieService.findRandomThree())
+        Mockito.when(movieCachedService.findRandomThree())
                 .thenReturn(List.of(fourthdMovieDto, secondMovieDto, firstMovieDto));
-        Mockito.when(movieService.findByGenreId(1)).thenReturn(List.of(firstMovieDto, secondMovieDto));
-        Mockito.when(movieService.findByGenreId(1, RatingSortingOrder.desc))
+        Mockito.when(movieCachedService.findByGenreId(1)).thenReturn(List.of(firstMovieDto, secondMovieDto));
+        Mockito.when(movieCachedService.findByGenreId(1, RatingSortingOrder.desc))
                 .thenReturn(List.of(secondMovieDto, firstMovieDto));
-        Mockito.when(movieService.findByGenreId(2, PriceSortingOrder.asc))
+        Mockito.when(movieCachedService.findByGenreId(2, PriceSortingOrder.asc))
                 .thenReturn(List.of(fourthdMovieDto, thirdMovieDto));
-        Mockito.when(movieService.findByGenreId(2, PriceSortingOrder.desc))
+        Mockito.when(movieCachedService.findByGenreId(2, PriceSortingOrder.desc))
                 .thenReturn(List.of(thirdMovieDto, fourthdMovieDto));
     }
 
@@ -287,7 +287,7 @@ public class MovieControllerTest {
                                 .description("reviewDescription1").build()))
                 .build();
 
-        Mockito.when(movieService.findById(1)).thenReturn(expectedMovieDto);
+        Mockito.when(movieCachedService.findById(1)).thenReturn(expectedMovieDto);
 
         mockMvc.perform(get("/api/v1/movies/movie/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -313,7 +313,7 @@ public class MovieControllerTest {
 
     @Test
     public void testFindById_whenUserIsNotPresent() throws Exception {
-        Mockito.when(movieService.findById(2)).thenThrow(new MovieNotFoundException("No such movie found"));
+        Mockito.when(movieCachedService.findById(2)).thenThrow(new MovieNotFoundException("No such movie found"));
 
         mockMvc.perform(get("/api/v1/movies/movie/2")
                         .contentType(MediaType.APPLICATION_JSON))
