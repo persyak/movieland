@@ -9,15 +9,30 @@ import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.EditCountryDto;
 import com.ohorodnik.movieland.dto.EditGenreDto;
 import com.ohorodnik.movieland.dto.EditMovieDto;
+import com.ohorodnik.movieland.dto.MovieDetailsDto;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertInsertCount;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
@@ -34,6 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 //Below annotation is to close context after each method to avoid cached data.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@EmbeddedKafka(topics = "movietopic-int")
+@TestPropertySource(properties = {"spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
+        "spring.kafka.admin.properties.bootstrap.servers=${spring.embedded.kafka.brokers"})
 public class MovieControllerITest extends BaseContainerImpl {
 
     private static final String MOVIES_DATASET = "datasets/movie/movie-dataset.json";
@@ -56,8 +74,25 @@ public class MovieControllerITest extends BaseContainerImpl {
 
     @Autowired
     private MockMvc mockMvc;
-//    @Autowired
-//    private GenreCacheImpl genreCache;
+    @Autowired
+    private EmbeddedKafkaBroker embeddedKafkaBroker;
+
+    private Consumer<Integer, MovieDetailsDto> consumer;
+
+    @BeforeEach
+    public void setup() {
+        Map<String, Object> configs
+                = new HashMap<>(KafkaTestUtils.consumerProps("group1", "true", embeddedKafkaBroker));
+        configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        consumer = new DefaultKafkaConsumerFactory<>(configs,
+                new IntegerDeserializer(), new JsonDeserializer<>(MovieDetailsDto.class)).createConsumer();
+        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(consumer);
+    }
+
+    @AfterEach
+    public void close(){
+        consumer.close();
+    }
 
     @Test
     @DataSet(value = MOVIES_DATASET, cleanBefore = true, skipCleaningFor = "flyway_schema_history")
@@ -322,7 +357,6 @@ public class MovieControllerITest extends BaseContainerImpl {
             MOVIE_GENRE_ADDED_DATASET})
     @WithMockUser(authorities = "A")
     public void testAdd() throws Exception {
-
         reset();
 
         mockMvc.perform(post("/api/v1/movies/movie")
@@ -334,6 +368,21 @@ public class MovieControllerITest extends BaseContainerImpl {
         assertSelectCount(1);
         assertInsertCount(5);
 
+        ConsumerRecords<Integer, MovieDetailsDto> consumerRecords = KafkaTestUtils.getRecords(consumer);
+        assert consumerRecords.count() == 1;
+
+        consumerRecords.forEach(record -> {
+            MovieDetailsDto movieDetailsDto = record.value();
+            assert movieDetailsDto.getId() != null;
+            assert movieDetailsDto.getNameUa().equals("Втеча з Шоушенка");
+            assert movieDetailsDto.getNameNative().equals("The Shawshank Redemption");
+            assert movieDetailsDto.getYearOfRelease().getValue() == 1994;
+            assert movieDetailsDto.getDescription().equals("testDescription1");
+            assert movieDetailsDto.getPrice() == 140.45;
+            assert movieDetailsDto.getPicturePath().equals("https://testpicturepath");
+            assert movieDetailsDto.getCountries().size() == 2;
+            assert movieDetailsDto.getGenres().size() == 2;
+        });
     }
 
     @Test

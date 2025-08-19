@@ -65,7 +65,7 @@ public class MovieEnrichmentServiceImpl implements MovieEnrichmentService {
         List<Callable<Object>> callables = tasks.stream().map(Executors::callable).toList();
 
         try {
-            executorService.invokeAll(callables);
+            executorService.invokeAll(callables); // method is blocking, so all futures will be calculated here.
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

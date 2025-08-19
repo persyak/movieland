@@ -10,7 +10,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+  kafka:
+    template:
+        default-topic: movietopic-int
+    bootstrap:servers: localhost:9092,localhost:9093,localhost:9094
+    topic: "movietopic-int"
+    producer:
+      bootstrap:servers: localhost:9092,localhost:9093,localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        retries: 10
+    admin:
+      properties:
+        bootstrap.servers: localhost:9092,localhost:9093,localhost:9094
+        retries: 10
 caching:
   spring:
     genreListTTL: 14400000

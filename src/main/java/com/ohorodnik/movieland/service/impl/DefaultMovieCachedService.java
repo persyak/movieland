@@ -10,6 +10,7 @@ import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
 import com.ohorodnik.movieland.repository.MovieRepository;
 import com.ohorodnik.movieland.repository.MovieRepositoryCustom;
+import com.ohorodnik.movieland.service.MessagingService;
 import com.ohorodnik.movieland.service.MovieCachedService;
 import com.ohorodnik.movieland.service.RatesService;
 import com.ohorodnik.movieland.utils.enums.Currency;
@@ -37,6 +38,7 @@ public class DefaultMovieCachedService implements MovieCachedService {
     private final MovieRepositoryCustom movieRepositoryCustom;
     private final MovieMapper movieMapper;
     private final MovieCache movieCache;
+    private final MessagingService messagingService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -126,7 +128,9 @@ public class DefaultMovieCachedService implements MovieCachedService {
     public MovieDetailsDto add(AddMovieDto addMovieDto) {
         Movie movie = movieMapper.toMovie(addMovieDto);
         movie.setRating((double) 0);
-        return movieMapper.toMovieDetailsDto(movieRepository.save(movie));
+        MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieRepository.save(movie));
+        messagingService.sendMessage(movieDetailsDto);
+        return movieDetailsDto;
     }
 
     @Override
