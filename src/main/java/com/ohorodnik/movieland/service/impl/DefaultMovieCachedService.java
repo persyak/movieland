@@ -5,6 +5,7 @@ import com.ohorodnik.movieland.dto.AddMovieDto;
 import com.ohorodnik.movieland.dto.EditMovieDto;
 import com.ohorodnik.movieland.dto.MovieDetailsDto;
 import com.ohorodnik.movieland.dto.MovieDto;
+import com.ohorodnik.movieland.dto.events.MovieEventDto;
 import com.ohorodnik.movieland.entity.Movie;
 import com.ohorodnik.movieland.exception.MovieNotFoundException;
 import com.ohorodnik.movieland.mapper.MovieMapper;
@@ -27,6 +28,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static com.ohorodnik.movieland.utils.enums.MovieEventType.NEW;
+import static com.ohorodnik.movieland.utils.enums.MovieEventType.UPDATE;
 
 @Service
 @Slf4j
@@ -129,7 +133,12 @@ public class DefaultMovieCachedService implements MovieCachedService {
         Movie movie = movieMapper.toMovie(addMovieDto);
         movie.setRating((double) 0);
         MovieDetailsDto movieDetailsDto = movieMapper.toMovieDetailsDto(movieRepository.save(movie));
-        messagingService.sendMessage(movieDetailsDto);
+        MovieEventDto movieEventDto = MovieEventDto.builder()
+                .movieEventId(movieDetailsDto.getId())
+                .movieEventType(NEW)
+                .movieDetailsDto(movieDetailsDto)
+                .build();
+        messagingService.sendMessage(movieEventDto);
         return movieDetailsDto;
     }
 
@@ -141,6 +150,13 @@ public class DefaultMovieCachedService implements MovieCachedService {
 
         MovieDetailsDto movieDetailsDtoUpdated = movieMapper.toMovieDetailsDto(updatedMovie);
         movieCache.put(movieId, movieDetailsDtoUpdated);
+
+        MovieEventDto movieUpdateEventDto = MovieEventDto.builder()
+                .movieEventId(movieDetailsDtoUpdated.getId())
+                .movieEventType(UPDATE)
+                .movieDetailsDto(movieDetailsDtoUpdated)
+                .build();
+        messagingService.sendMessage(movieUpdateEventDto);
 
         return movieDetailsDtoUpdated;
     }
